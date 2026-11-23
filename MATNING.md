@@ -10,7 +10,7 @@ Följ instruktionen ordagrant.
 ## 0. Grundregler
 
 1. **Du får bara ändra en fil: `publiceringslogg.js`.** Rör aldrig `index.html`, `veckoanalys.js`,
-   `veckoanalys-arkiv.js`, `KORNING.md` eller någon annan fil.
+   `veckoanalys-arkiv.js`, `korschema.js`, `KORNING.md` eller någon annan fil.
 2. **Hitta inte på något.** Det som inte står på sidan blir `"okänt"`.
 3. **Kopiera ingen analystext** (repot är publikt). Spara bara korta markörer, till exempel en rubrik som "Vecka 47"
    eller ett datum, högst 10 ord.

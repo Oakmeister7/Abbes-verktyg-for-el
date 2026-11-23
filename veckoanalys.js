@@ -6,7 +6,7 @@
    Ändra ALDRIG index.html från den schemalagda uppgiften – bara denna fil och
    veckoanalys-arkiv.js.
 
-   UPPDATERAS: måndag kl. 15:00 och tisdag kl. 16:00 (svensk tid).
+   UPPDATERAS: se korschema.js (just nu måndag kl. 15:00 och tisdag kl. 16:00, svensk tid).
    VECKA: fältet "vecka" anger vilken ISO-vecka analysen gäller. Varje källa har
    "gäller_vecka" = den vecka källans egen text gäller. Bara källor vars
    gäller_vecka = vecka räknas med i sammanfattningen.
