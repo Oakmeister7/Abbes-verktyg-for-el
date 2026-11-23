@@ -46,9 +46,13 @@ Avgör **aktuell ISO-vecka** från dagens datum i svensk tid, i formatet `ÅÅÅ
 
 Läs varje källa med webbverktyget (WebFetch). Försök **högst två gånger** per källa. Går den inte att läsa: `status: "ej_läsbar"`.
 
+**Undvik gamla mellanlagrade versioner** (23 nov fick körningen Svenska kraftnäts sida från 20 nov, fast den var uppdaterad till vecka 48):
+- Lägg till en unik parameter i adressen: `?las=ÅÅÅÅMMDDTTMM` (eller `&las=…` om adressen redan har `?`). Avvisas adressen med parameter: läs utan.
+- Visar en källa en **tidigare vecka** än den aktuella: läs om **en gång** med en ny parameter (`las=ÅÅÅÅMMDDTTMMb`) innan du sätter `förra_veckan`. Skriv i `anm` om omläsningen gav en nyare version.
+
 | id | Källa | URL | Slag | Särskilt |
 |---|---|---|---|---|
-| svk | Svenska kraftnät – Information från driften | https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/ | kraftläge | Kraftläge, inte pris. Visas i sektionen "Kraftläge". |
+| svk | Svenska kraftnät – Information från driften | https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/ | kraftläge | Kraftläge, inte pris. Sidan anger "Vecka NN, uppdaterad <datum>" – använd det för `gäller_vecka` och `publicerad`. Med i enkel vy när den gäller aktuell vecka (steg 5 och 7). |
 | eon | E.ON | https://www.eon.se/aktuellt/elmarknaden | vecka | Gick inte att läsa vid test 2026-11-23 (fel från webbplatsen). |
 | tibber | Tibber | https://tibber.com/se/elprisprognos | vecka | Anger "exkl. skatter och avgifter" → tolka som exkl. moms och skriv det i `momsnot`. |
 | kraftringen | Kraftringen | https://www.kraftringen.se/privat/el/veckans-elprisanalys/ | vecka | |
@@ -90,7 +94,8 @@ Gå igenom reglerna i ordning. Den första som passar gäller.
 - `i_sammanfattning: true` **endast** för veckokällor med `status: "aktuell"`.
 - **Måndagens körning:** källor som fortfarande visar förra veckan **utesluts** ur sammanfattningen (`i_sammanfattning: false`). De visas ändå i den avancerade vyn.
 - **Tisdagens körning:** samma regel. Den skriver över måndagens fil för samma vecka (steg 2.3).
-- Månadskällor och Svenska kraftnät ingår **aldrig** i veckans sammanfattning.
+- Månadskällor ingår **aldrig** i veckans sammanfattning.
+- **Svenska kraftnät:** `status` enligt samma tabell som veckokällorna. `i_sammanfattning: true` när den gäller aktuell vecka. Den räknas **aldrig** som veckokälla: inte i spärren "färre än 3", inte i "Aktuella veckokällor" och aldrig som grund för `riktning`.
 - **Skånska Energi och Kraftringen:** är texterna i sak identiska räknas de som **en** källa. Använd bara `kraftringen` i `enkel` och sätt `i_sammanfattning: false` för `skanska`, med `anm: "Samma text som Kraftringen – räknas som en källa."`. Är texterna olika räknas de som två källor.
 
 ---
@@ -121,10 +126,11 @@ För varje siffra som står **i text** hos källan:
 Underlag: **endast** källor med `i_sammanfattning: true`.
 
 - `sammanfattning`: 1–2 meningar i vardagsspråk. Är underlaget tunt (färre än 3 aktuella källor), skriv det.
-- `punkter`: 3–5 korta punkter i vardagsspråk. Om möjligt: blir det dyrt eller billigt, när i veckan, och varför. Förklara facktermer ("vindkraften ger mindre el" i stället för "låg vindkraftsproduktion"). Varje punkt har `källor: [id, …]` med de källor den bygger på.
+- `punkter`: 3–6 korta punkter i vardagsspråk. Om möjligt: blir det dyrt eller billigt, när i veckan, och varför. Förklara facktermer ("vindkraften ger mindre el" i stället för "låg vindkraftsproduktion"). Varje punkt har `källor: [id, …]` med de källor den bygger på.
 - `elområden`: alltid fyra poster i ordningen SE1, SE2, SE3, SE4.
   - `riktning` = `"upp"`, `"ned"` eller `"oförändrat"` **bara** om en aktuell källa uttryckligen jämför med förra veckan för det elområdet. Annars `"okänt"`.
   - `text`: en kort mening. SE2 är viktigast (användarna sitter i SE2).
+- **Svenska kraftnät** (om `i_sammanfattning: true`): 1–2 punkter om läget i elsystemet som påverkar priset – kärnkraft som startar eller står still (med datum), reservkraft, underhåll i stamnätet, vattenmagasin, gas – med `källor: ["svk"]` (lägg till `"svk"` i en elbolagspunkt som säger samma sak). Svenska kraftnät får nämnas i `sammanfattning`, men inte som prisprognos.
 - Finns inga aktuella källor: skriv en punkt om att ingen källa har publicerat veckans analys än, och sätt alla riktningar till `"okänt"`.
 
 ---
@@ -134,7 +140,7 @@ Underlag: **endast** källor med `i_sammanfattning: true`.
 Lägg till i `varningar` (i den här ordningen, bara de som gäller):
 
 1. **Färre än 3 aktuella veckokällor** (räkna Kraftringen och Skånska Energi som en om de är identiska):
-   `"Färre än 3 källor gäller aktuell vecka (N av 11: <namn>). Sammanfattningen bygger bara på dem."`
+   `"Färre än 3 elbolag har publicerat sin veckoanalys (N: <namn>). Sammanfattningen bygger bara på dem."` (Svenska kraftnät räknas inte här.)
    → **Pusha ändå**, men med varningen i filen och i commit-meddelandet (steg 9).
 2. Måndagens körning, om källor visar förra veckan:
    `"Måndagskörning: N källor visar fortfarande vecka V och ingår inte i sammanfattningen (<namn>)."`

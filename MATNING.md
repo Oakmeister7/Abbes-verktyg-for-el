@@ -35,6 +35,7 @@ och rapportera: "Mätningen är klar – ta bort den schemalagda uppgiften 'Mät
 ## 2. Läs källorna
 
 Läs varje källa en gång med webbverktyget (WebFetch). Försök högst två gånger om läsningen misslyckas.
+Lägg till en unik parameter i adressen, `?las=ÅÅÅÅMMDDTTMM` (eller `&las=…`), så att du inte får en gammal mellanlagrad version. Avvisas adressen med parameter: läs utan.
 
 | id | URL |
 |---|---|

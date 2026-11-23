@@ -25,7 +25,7 @@
 
      enkel: {                               // för vanliga personer, vardagsspråk
        sammanfattning: "kort text",         // 1–2 meningar
-       punkter: [ { text, "källor": ["id", …] } ],          // 3–5 punkter
+       punkter: [ { text, "källor": ["id", …] } ],          // 3–6 punkter
        "elområden": [                        // alltid SE1, SE2, SE3, SE4
          { "elområde": "SE2", riktning: "upp"|"ned"|"oförändrat"|"okänt",
            text: "kort förklaring", "källor": ["id", …] }
@@ -61,7 +61,7 @@
    ============================================================================ */
 
 window.VECKOANALYS_KALLOR = [
-  { id: "svk", namn: "Svenska kraftnät – Information från driften", url: "https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/", slag: "kraftläge", anm: "Kraftläge, inte pris." },
+  { id: "svk", namn: "Svenska kraftnät – Information från driften", url: "https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/", slag: "kraftläge", anm: "Kraftläge, inte pris. Med i enkel vy när den gäller aktuell vecka." },
   { id: "eon", namn: "E.ON", url: "https://www.eon.se/aktuellt/elmarknaden", slag: "vecka", anm: "" },
   { id: "tibber", namn: "Tibber", url: "https://tibber.com/se/elprisprognos", slag: "vecka", anm: "" },
   { id: "kraftringen", namn: "Kraftringen", url: "https://www.kraftringen.se/privat/el/veckans-elprisanalys/", slag: "vecka", anm: "" },
@@ -78,23 +78,24 @@ window.VECKOANALYS = {
   schema: 1,
   vecka: "2026-W48",
   period: { "från": "2026-11-23", "till": "2026-11-29" },
-  uppdaterad: "2026-11-23T15:08:50+01:00",
+  uppdaterad: "2026-11-23T16:29:00+01:00",
   "körning": "mån",
 
   enkel: {
-    sammanfattning: "Bara en källa har hunnit publicera en analys för den här veckan. Den säger att elpriset fortsätter vara högt, mest i södra Sverige.",
+    sammanfattning: "Två källor har uppdaterat för den här veckan: Vattenfall och Svenska kraftnät. Båda pekar på fortsatt höga elpriser, mest i södra Sverige.",
     punkter: [
-      { text: "Elpriset väntas fortsätta vara högt, framför allt i södra Sverige (SE3 och SE4).", "källor": ["vattenfall"] },
+      { text: "Elpriset väntas fortsätta vara högt, framför allt i södra Sverige (SE3 och SE4).", "källor": ["vattenfall", "svk"] },
       { text: "Veckan börjar kallare än vanligt. När det är kallt använder vi mer el, och då stiger priset.", "källor": ["vattenfall"] },
       { text: "Det blåser lite, så vindkraftverken ger mindre el än vanligt.", "källor": ["vattenfall"] },
-      { text: "Elnätet kan inte föra över tillräckligt med el från norr till söder. Därför blir skillnaden i pris mellan norra och södra Sverige stor.", "källor": ["vattenfall"] },
-      { text: "Flera kärnkraftsreaktorer väntas starta igen under november och december, vilket kan göra priserna lugnare.", "källor": ["vattenfall"] }
+      { text: "Elnätet kan inte föra över tillräckligt med el från norr till söder, och underhåll i stamnätet minskar det ytterligare. Därför blir skillnaden i pris mellan norra och södra Sverige stor.", "källor": ["vattenfall", "svk"] },
+      { text: "Kärnkraften kommer tillbaka: Ringhals 4 väntas starta i dag (23 november), Forsmark 1 väntas köra fullt från 27 november och Ringhals 3 först 20 december. Mer kärnkraft kan göra priserna lugnare.", "källor": ["vattenfall", "svk"] },
+      { text: "Lite vatten i Norges vattenmagasin och låga gaslager i Europa håller också uppe priset. Ett reservkraftverk i Karlshamn står redo om elen inte skulle räcka.", "källor": ["svk"] }
     ],
     "elområden": [
       { "elområde": "SE1", riktning: "okänt", text: "Ingen aktuell källa säger hur priset ändras i SE1 den här veckan.", "källor": [] },
       { "elområde": "SE2", riktning: "okänt", text: "Ingen aktuell källa säger hur priset ändras i SE2 den här veckan. Norra Sverige nämns inte särskilt.", "källor": [] },
-      { "elområde": "SE3", riktning: "okänt", text: "Priset väntas vara fortsatt högt, men ingen aktuell källa säger om det blir högre eller lägre än förra veckan.", "källor": ["vattenfall"] },
-      { "elområde": "SE4", riktning: "okänt", text: "Priset väntas vara fortsatt högt, men ingen aktuell källa säger om det blir högre eller lägre än förra veckan.", "källor": ["vattenfall"] }
+      { "elområde": "SE3", riktning: "okänt", text: "Priset väntas vara fortsatt högt, men ingen aktuell källa säger om det blir högre eller lägre än förra veckan.", "källor": ["vattenfall", "svk"] },
+      { "elområde": "SE4", riktning: "okänt", text: "Priset väntas vara fortsatt högt, men ingen aktuell källa säger om det blir högre eller lägre än förra veckan.", "källor": ["vattenfall", "svk"] }
     ]
   },
 
@@ -102,11 +103,11 @@ window.VECKOANALYS = {
     "källor": [
       {
         id: "svk", namn: "Svenska kraftnät – Information från driften", url: "https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/",
-        "gäller_vecka": "2026-W47", publicerad: "2026-11-20", status: "förra_veckan", "i_sammanfattning": false,
+        "gäller_vecka": "2026-W48", publicerad: "2026-11-23", status: "aktuell", "i_sammanfattning": true,
         siffror: [],
-        orsaker: ["kärnkraft", "överföring", "vind", "vattenläge", "gas"],
-        sammanfattning: "Driftsidan är senast uppdaterad 20 november och gäller vecka 47. Risken för effektbrist bedömdes som låg de närmaste dygnen. Forsmark 3 är tillbaka sedan 18 november och Forsmark 1 kör med en av två generatorer (den andra väntas 27 november). Ringhals 4 väntades tillbaka 22 november, Ringhals 3 först 20 december. Strategisk reserv (330 MW i Karlshamn) finns från 16 november. Arbeten i stamnätet begränsar överföringen, och vattenmagasinen i Norge ligger under det normala.",
-        anm: "Kraftläge, inte pris. Sidan är lång och lästes bara delvis ordagrant; driftuppgifterna är därför något osäkra."
+        orsaker: ["kärnkraft", "överföring", "vattenläge", "gas"],
+        sammanfattning: "Driftsidan gäller vecka 48 och uppdaterades 23 november. Elpriserna i södra Sverige har tidvis varit höga; mer produktion nära förbrukningen i söder vore det som dämpar priserna mest. Ringhals 4 väntas tillbaka 23 november och Ringhals 3 den 20 december. Forsmark 3 och ena generatorn i Forsmark 1 är i drift sedan 18 november; Forsmark 1:s andra generator väntas 27 november. Strategisk reserv (Karlshamnsverket block 2, 330 MW) finns 16 november–15 mars. Underhåll i stamnätet begränsar överföringen. Norska vattenmagasin ligger under det normala, mest i söder, och låga gaslager i Europa, ett osäkert omvärldsläge och begränsad kärnkraft bidrar till högre priser. Frekvenskvaliteten vecka 47 var bättre än målet.",
+        anm: "Kraftläge, inte pris. Rättad manuellt 23 nov kl. 16:29 efter Abbes kontroll av sidan: den automatiska läsningen kl. 15:06 fick en äldre mellanlagrad version (20 nov, vecka 47)."
       },
       {
         id: "eon", namn: "E.ON", url: "https://www.eon.se/aktuellt/elmarknaden",
@@ -204,8 +205,8 @@ window.VECKOANALYS = {
   },
 
   varningar: [
-    "Färre än 3 källor gäller aktuell vecka (1 av 11: Vattenfall). Sammanfattningen bygger bara på dem.",
-    "Måndagskörning: 5 källor visar fortfarande vecka 47 och ingår inte i sammanfattningen (Svenska kraftnät, Tibber, Kraftringen, Skånska Energi, Öresundskraft).",
+    "Färre än 3 elbolag har publicerat sin veckoanalys (1: Vattenfall). Svenska kraftnät beskriver läget i elsystemet, inte priset. Sammanfattningen bygger bara på dem.",
+    "Måndagskörning: 4 källor visar fortfarande vecka 47 och ingår inte i sammanfattningen (Tibber, Kraftringen, Skånska Energi, Öresundskraft).",
     "E.ON, Göteborg Energi och Mälarenergi gick inte att läsa."
   ]
 };
