@@ -41,6 +41,7 @@ Avgör **aktuell ISO-vecka** från dagens datum i svensk tid, i formatet `ÅÅÅ
    - Samma vecka får bara finnas en gång i arkivet. Finns den redan, ersätt den.
    - Behåll högst 52 veckor i arkivet. Ta bort de äldsta.
 3. **Samma vecka:** om `VECKOANALYS.vecka` redan är aktuell vecka **skriver den nya körningen över hela objektet**. Tisdagens körning ersätter alltså måndagens. Arkivet ändras inte.
+   **Undantag E.ON:** har E.ON-posten `anm` som börjar med "Läst via Chrome" och samma `gäller_vecka` som aktuell vecka, och du själv inte kan läsa E.ON: behåll E.ON-posten oförändrad och ta med den i `enkel` och varningarna som vanligt (se EON.md).
 
 ---
 
@@ -55,7 +56,7 @@ Läs varje källa med webbverktyget (WebFetch). Försök **högst två gånger**
 | id | Källa | URL | Slag | Särskilt |
 |---|---|---|---|---|
 | svk | Svenska kraftnät – Information från driften | https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/ | kraftläge | Kraftläge, inte pris. Sidan anger "Vecka NN, uppdaterad <datum>" – använd det för `gäller_vecka` och `publicerad`. Med i enkel vy när den gäller aktuell vecka (steg 5 och 7). |
-| eon | E.ON | https://www.eon.se/aktuellt/elmarknaden | vecka | Gick inte att läsa vid test 2026-11-23 (fel från webbplatsen). |
+| eon | E.ON | https://www.eon.se/aktuellt/elmarknaden | vecka | Går inte att läsa från molnet. Fylls i efteråt via Chrome på Abbes dator (EON.md). Kan du inte läsa den: `ej_läsbar`, utom undantaget i steg 2.3. |
 | tibber | Tibber | https://tibber.com/se/elprisprognos | vecka | Anger "exkl. skatter och avgifter" → tolka som exkl. moms och skriv det i `momsnot`. |
 | kraftringen | Kraftringen | https://www.kraftringen.se/privat/el/veckans-elprisanalys/ | vecka | |
 | skanska | Skånska Energi | https://www.skanska-energi.se/el/veckans-elprisanalys/ | vecka | Har haft samma text som Kraftringen, se steg 5. |
