@@ -52,6 +52,13 @@ Läs varje källa med webbverktyget (WebFetch). Försök **högst två gånger**
 - Lägg till en unik parameter i adressen: `?las=ÅÅÅÅMMDDTTMM` (eller `&las=…` om adressen redan har `?`). Avvisas adressen med parameter: läs utan.
 - Visar en källa en **tidigare vecka** än den aktuella: läs om **en gång** med en ny parameter (`las=ÅÅÅÅMMDDTTMMb`) innan du sätter `förra_veckan`. Skriv i `anm` om omläsningen gav en nyare version.
 
+**Undvik godkännandefrågor (körningen ska gå helt automatiskt).** Vid körningen 24 nov fick Abbe godkänna tre läsningar: en adress som läsagenten själv byggt ihop (Öresundskrafts `…b`-adress), en länk som agenten hittat på en sida (Göteborg Energi) och ett nytt försök mot en webbplats som redan gett fel (E.ON). Läsningar av adresser som stod utskrivna i sin helhet i agentens uppdrag gick igenom utan fråga. Därför:
+- Skriv ut **varje fullständig adress** som får läsas i uppdraget till läsagenten, inklusive `?las=…` och `?las=…b`. Skriv aldrig bara "lägg till b" eller "läs utan parametern".
+- Läsagenten får **bara** läsa adresser som står utskrivna i sin helhet i uppdraget. Inga egna varianter och inga länkar den hittar på sidorna.
+- **Göteborg Energi:** följ inga länkar. Står ingen veckoanalys på sidan i tabellen: `"ej_läsbar"`.
+- **E.ON:** ger första läsningen fel från webbplatsen, försök inte igen (inte heller utan parameter). Sätt `"ej_läsbar"`.
+- Skicka aldrig ett nytt uppdrag (eller följdmeddelande) till en läsagent om en källa som redan har misslyckats.
+
 | id | Källa | URL | Slag | Särskilt |
 |---|---|---|---|---|
 | svk | Svenska kraftnät – Information från driften | https://www.svk.se/om-kraftsystemet/kraftsystemdata/information-fran-driften/ | kraftläge | Kraftläge, inte pris. Sidan anger "Vecka NN, uppdaterad <datum>" – använd det för `gäller_vecka` och `publicerad`. Med i enkel vy när den gäller aktuell vecka (steg 5 och 7). |
@@ -62,7 +69,7 @@ Läs varje källa med webbverktyget (WebFetch). Försök **högst två gånger**
 | vattenfall | Vattenfall | https://www.vattenfall.se/elavtal/elmarknaden/elmarknaden-just-nu/ | vecka | |
 | bixia | Bixia | https://bixia.se/privat/elavtal/elsituationen-just-nu | månad | Alltid `status: "månadsprognos"`. |
 | skekraft | Skellefteå Kraft | https://www.skekraft.se/privat/elavtal/aktuellt-pa-elmarknaden/ | månad | Alltid `status: "månadsprognos"`. |
-| goteborg | Göteborg Energi | https://www.goteborgenergi.se/privat/elavtal/elpriser | vecka | Siffror finns i diagram. Följ sidans länk till veckoanalysen om en sådan finns. Annars `"ej_läsbar"`. |
+| goteborg | Göteborg Energi | https://www.goteborgenergi.se/privat/elavtal/elpriser | vecka | Siffror finns i diagram. Följ inga länkar (ger godkännandefråga; länken ledde 24 nov bara till en allmän nyhetssida). Ingen veckoanalys på sidan: `"ej_läsbar"`. |
 | oresundskraft | Öresundskraft | https://oresundskraft.se/energikompassen/elmarknaden-just-nu/ | vecka | |
 | malarenergi | Mälarenergi | https://www.malarenergi.se/foretag/elavtal-foretag/prognoser-for-elpriset/ | vecka | Analystext saknades vid test. Saknas text: `"ej_läsbar"`. |
 

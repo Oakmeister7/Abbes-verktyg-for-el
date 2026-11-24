@@ -36,6 +36,7 @@ och rapportera: "Mätningen är klar – ta bort den schemalagda uppgiften 'Mät
 
 Läs varje källa en gång med webbverktyget (WebFetch). Försök högst två gånger om läsningen misslyckas.
 Lägg till en unik parameter i adressen, `?las=ÅÅÅÅMMDDTTMM` (eller `&las=…`), så att du inte får en gammal mellanlagrad version. Avvisas adressen med parameter: läs utan.
+För att slippa godkännandefrågor: skriv ut varje fullständig adress i uppdraget till läsagenten och låt den bara läsa just dem (inga egna varianter, inga länkar från sidorna). Ger E.ON fel från webbplatsen: försök inte igen.
 
 | id | URL |
 |---|---|
