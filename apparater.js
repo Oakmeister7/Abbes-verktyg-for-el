@@ -227,5 +227,22 @@ window.APPARATER_PRIS = {
   energiskatt_ore: 36.0,      // exkl. moms, FAKTA (Skatteverket)
   avdrag_norr_ore: 9.6,       // avdrag i vissa kommuner i norra Sverige, FAKTA (Skatteverket)
   kommuner: "Hela Norrbottens, Västerbottens och Jämtlands län, samt Sollefteå, Ånge, Örnsköldsvik, Ljusdal, Malung-Sälen, Mora, Orsa, Älvdalen och Torsby.",
-  kalla: { namn: "Skatteverket – Skatt på el (skattesats 2026 och aktuella kommuner)", url: "https://www.skatteverket.se/elskatt" }
+  kalla: { namn: "Skatteverket – Skatt på el (skattesats 2026 och aktuella kommuner)", url: "https://www.skatteverket.se/elskatt" },
+
+  /* Generellt pris (förval i fliken): SCB:s genomsnittliga totalpris för hushåll, öre/kWh.
+     FAKTA: SCB tabell TAB4310, uppdaterad 2026-09-28, hämtad via SCB:s API 2026-11-24.
+     handel + nat + skatt + moms = total (DD avviker 0,01 i SCB:s egen avrundning).
+     Fasta avgifter ingår, fördelade per kWh. Uppdatera när SCB publicerar ett nytt halvår. */
+  generellt: {
+    period: "första halvåret 2026",
+    standard: "DD",
+    kategorier: [
+      { id: "DA", namn: "under 1 000 kWh/år",       handel: 136.93, nat: 334.81, skatt: 36.00, moms: 126.94, total: 634.68 },
+      { id: "DB", namn: "1 000–2 499 kWh/år",       handel: 111.40, nat: 152.12, skatt: 36.00, moms: 74.88,  total: 374.40 },
+      { id: "DC", namn: "2 500–4 999 kWh/år",       handel: 101.60, nat: 126.70, skatt: 36.00, moms: 66.08,  total: 330.38 },
+      { id: "DD", namn: "5 000–14 999 kWh/år",      handel: 97.76,  nat: 77.01,  skatt: 36.00, moms: 52.69,  total: 263.47 },
+      { id: "DE", namn: "15 000 kWh/år eller mer",  handel: 94.42,  nat: 56.99,  skatt: 36.00, moms: 46.85,  total: 234.26 }
+    ],
+    kalla: { namn: "SCB – Priser på el för hushåll efter förbrukarkategori (halvår)", url: "https://www.statistikdatabasen.scb.se/goto/sv/ssd/SSDHalvarElHus" }
+  }
 };
