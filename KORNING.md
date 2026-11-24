@@ -9,7 +9,7 @@ Den här filen är en **fristående instruktion** för den schemalagda uppgiften
 
 1. **Du får bara ändra två filer:** `veckoanalys.js` och `veckoanalys-arkiv.js`.
    `publiceringslogg.js` tillhör mätuppgiften (MATNING.md) – rör den inte.
-2. **Rör ALDRIG `index.html`, `korschema.js`** eller någon annan fil. Kontrollera före commit (steg 9). Om någon annan fil är ändrad: avbryt utan att pusha.
+2. **Rör ALDRIG `index.html`, `korschema.js`, `apparater.js`** eller någon annan fil. Kontrollera före commit (steg 9). Om någon annan fil är ändrad: avbryt utan att pusha.
 3. **Hitta aldrig på siffror, datum eller orsaker.** Saknas något: skriv `"okänt"` (text) eller `null` (tal).
 4. **Egna ord.** Sidan är publik. Skriv alla sammanfattningar och punkter med egna formuleringar. Kopiera inte meningar från källorna. Det enda som får återges exakt är siffror, i fältet `text` under `siffror`.
 5. **Svenska** i all text. Tider i svensk tid (Europe/Stockholm).
