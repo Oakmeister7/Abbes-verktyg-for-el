@@ -220,3 +220,12 @@ window.APPARATER_SPAR = {
   handduk:    { watt: 60, timer: 6, kalla: "ekr", markning: "BERÄKNAT", not: "60 W dygnet runt jämfört med 6 timmar per dygn." },
   poolpump:   { vanlig: 3240, varvtal: 1080, kalla: "pahlen", markning: "FAKTA", not: "Per säsong (180 dygn dygnet runt)." }
 };
+
+/* Energiskatt på el. Uppdateras när skattesatsen ändras (oftast 1 januari) – ingen ombyggnad behövs. */
+window.APPARATER_PRIS = {
+  ar: 2026,
+  energiskatt_ore: 36.0,      // exkl. moms, FAKTA (Skatteverket)
+  avdrag_norr_ore: 9.6,       // avdrag i vissa kommuner i norra Sverige, FAKTA (Skatteverket)
+  kommuner: "Hela Norrbottens, Västerbottens och Jämtlands län, samt Sollefteå, Ånge, Örnsköldsvik, Ljusdal, Malung-Sälen, Mora, Orsa, Älvdalen och Torsby.",
+  kalla: { namn: "Skatteverket – Skatt på el (skattesats 2026 och aktuella kommuner)", url: "https://www.skatteverket.se/elskatt" }
+};
