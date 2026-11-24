@@ -132,7 +132,8 @@ Underlag: **endast** källor med `i_sammanfattning: true`.
 - `elområden`: alltid fyra poster i ordningen SE1, SE2, SE3, SE4.
   - `riktning` = `"upp"`, `"ned"` eller `"oförändrat"` **bara** om en aktuell källa uttryckligen jämför med förra veckan för det elområdet. Annars `"okänt"`.
   - `text`: en kort mening. SE2 är viktigast (användarna sitter i SE2).
-- **Svenska kraftnät** (om `i_sammanfattning: true`): 1–2 punkter om läget i elsystemet som påverkar priset – kärnkraft som startar eller står still (med datum), reservkraft, underhåll i stamnätet, vattenmagasin, gas – med `källor: ["svk"]` (lägg till `"svk"` i en elbolagspunkt som säger samma sak). Svenska kraftnät får nämnas i `sammanfattning`, men inte som prisprognos.
+- **`elsystemet` – Läget i elsystemet (Svenska kraftnät). Det viktigaste i fliken; visas överst i enkel vy.** Fyll `enkel.elsystemet = { punkter: [ { text } ] }` med 3–6 punkter i vardagsspråk ur Svenska kraftnäts senaste driftsida, så länge den är **högst 7 dagar gammal** (även om den gäller förra veckan – sidan visar då själv att den är från en tidigare vecka). Ta med det som finns: driftchefens bedömning av priset, kärnkraft per reaktor med datum (i drift / avställd / väntas tillbaka), reservkraft, stamnätet, vattenmagasin, gas/omvärld, risk för effektbrist. Börja punkten med ämnet ("Kärnkraft: …"). Egna ord. Äldre än 7 dagar eller ej läsbar: utelämna `elsystemet`.
+- I `punkter` (Det här påverkar priset) får `"svk"` läggas till i en elbolagspunkt som säger samma sak, och högst 1 egen svk-punkt om något påverkar priset och inte redan står i `elsystemet`. Svenska kraftnät får nämnas i `sammanfattning`, men aldrig som prisprognos eller grund för `riktning`.
 - Finns inga aktuella källor: skriv en punkt om att ingen källa har publicerat veckans analys än, och sätt alla riktningar till `"okänt"`.
 
 ---
@@ -142,7 +143,7 @@ Underlag: **endast** källor med `i_sammanfattning: true`.
 Lägg till i `varningar` (i den här ordningen, bara de som gäller):
 
 1. **Färre än 3 aktuella veckokällor** (räkna Kraftringen och Skånska Energi som en om de är identiska):
-   `"Färre än 3 elbolag har publicerat sin veckoanalys (N: <namn>). Sammanfattningen bygger bara på dem."` (Svenska kraftnät räknas inte här.)
+   `"Färre än 3 elbolag har publicerat sin veckoanalys (N: <namn>). Prisdelen bygger bara på dem; läget i elsystemet kommer från Svenska kraftnät."` (Svenska kraftnät räknas inte här. Utan `elsystemet`: avsluta efter "bara på dem.")
    → **Pusha ändå**, men med varningen i filen och i commit-meddelandet (steg 9).
 2. Måndagens körning, om källor visar förra veckan:
    `"Måndagskörning: N källor visar fortfarande vecka V och ingår inte i sammanfattningen (<namn>)."`

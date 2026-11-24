@@ -26,6 +26,7 @@
      enkel: {                               // för vanliga personer, vardagsspråk
        sammanfattning: "kort text",         // 1–2 meningar
        punkter: [ { text, "källor": ["id", …] } ],          // 3–6 punkter
+       elsystemet: { punkter: [ { text } ] },               // 3–6 punkter från Svenska kraftnät (läget i elsystemet)
        "elområden": [                        // alltid SE1, SE2, SE3, SE4
          { "elområde": "SE2", riktning: "upp"|"ned"|"oförändrat"|"okänt",
            text: "kort förklaring", "källor": ["id", …] }
@@ -89,8 +90,17 @@ window.VECKOANALYS = {
       { text: "Det blåser lite, så vindkraftverken ger mindre el än vanligt.", "källor": ["vattenfall"] },
       { text: "Elnätet kan inte föra över tillräckligt med el från norr till söder, och underhåll i stamnätet minskar det ytterligare. Därför blir skillnaden i pris mellan norra och södra Sverige stor.", "källor": ["vattenfall", "svk"] },
       { text: "Kärnkraften kommer tillbaka: Ringhals 4 väntas starta i dag (23 november), Forsmark 1 väntas köra fullt från 27 november och Ringhals 3 först 20 december. Mer kärnkraft kan göra priserna lugnare.", "källor": ["vattenfall", "svk"] },
-      { text: "Lite vatten i Norges vattenmagasin och låga gaslager i Europa håller också uppe priset. Ett reservkraftverk i Karlshamn står redo om elen inte skulle räcka.", "källor": ["svk"] }
+      { text: "Lite vatten i Norges vattenmagasin och låga gaslager i Europa håller också uppe priset.", "källor": ["svk"] }
     ],
+    elsystemet: {
+      punkter: [
+        { text: "Elpriset i södra Sverige har tidvis varit högt. Mer elproduktion i söder, nära där elen används, är det som skulle sänka priset mest." },
+        { text: "Kärnkraft: Forsmark 3 och ena halvan av Forsmark 1 är igång sedan 18 november. Andra halvan av Forsmark 1 väntas 27 november, Ringhals 4 den 23 november och Ringhals 3 först 20 december." },
+        { text: "Reservkraft: Karlshamnsverket (330 MW) står i reserv 16 november–15 mars och kan startas om elen inte räcker." },
+        { text: "Stamnätet: underhåll och utbyggnad ger avbrott som begränsar hur mycket el som kan föras över just nu, men gör nätet starkare inför vintern." },
+        { text: "Vatten och gas: Norges vattenmagasin ligger under det normala, mest i söder, och Europas gaslager är låga. Tillsammans med ett osäkert omvärldsläge och begränsad kärnkraft håller det uppe priset." }
+      ]
+    },
     "elområden": [
       { "elområde": "SE1", riktning: "okänt", text: "Ingen aktuell källa säger hur priset ändras i SE1 den här veckan.", "källor": [] },
       { "elområde": "SE2", riktning: "okänt", text: "Ingen aktuell källa säger hur priset ändras i SE2 den här veckan. Norra Sverige nämns inte särskilt.", "källor": [] },
@@ -205,7 +215,7 @@ window.VECKOANALYS = {
   },
 
   varningar: [
-    "Färre än 3 elbolag har publicerat sin veckoanalys (1: Vattenfall). Svenska kraftnät beskriver läget i elsystemet, inte priset. Sammanfattningen bygger bara på dem.",
+    "Färre än 3 elbolag har publicerat sin veckoanalys (1: Vattenfall). Prisdelen bygger bara på dem; läget i elsystemet kommer från Svenska kraftnät.",
     "Måndagskörning: 4 källor visar fortfarande vecka 47 och ingår inte i sammanfattningen (Tibber, Kraftringen, Skånska Energi, Öresundskraft).",
     "E.ON, Göteborg Energi och Mälarenergi gick inte att läsa."
   ]
