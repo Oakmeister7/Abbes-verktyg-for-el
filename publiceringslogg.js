@@ -666,6 +666,99 @@ window.PUBLICERINGSLOGG = {
           "ändrad": null
         }
       ]
+    },
+    {
+      "tid": "2026-11-26T15:07:01+01:00",
+      "källor": [
+        {
+          "id": "svk",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "eon",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "tibber",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "kraftringen",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "skanska",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "vattenfall",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "bixia",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "skekraft",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "goteborg",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "oresundskraft",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "malarenergi",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        }
+      ]
     }
   ],
   sammanfattning: null
