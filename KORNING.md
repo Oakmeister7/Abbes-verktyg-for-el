@@ -21,10 +21,11 @@ Den här filen är en **fristående instruktion** för den schemalagda uppgiften
 
 | Körning | Tid (svensk tid) | Fältet `"körning"` |
 |---|---|---|
+| Måndag | 08:00 | `"mån"` |
 | Måndag | 15:00 | `"mån"` |
-| Tisdag | 16:00 | `"tis"` |
+| Tisdag | 15:00 | `"tis"` |
 
-Måndagskörningen ligger kl. 15:00 (inte 08:00): vid test måndag 2026-11-23 kl. 11:38 och 11:55 visade de flesta källor fortfarande förra veckan.
+Varje körning skriver över den förra för samma vecka (steg 2.3). Kl. 08:00 på måndag visar de flesta källor oftast fortfarande förra veckan (test måndag 2026-11-23 kl. 11:38 och 11:55). De utesluts då ur sammanfattningen enligt steg 5, och 15:00-körningen fyller på.
 
 Tiderna som visas i fliken läses från **`korschema.js`**. Ändras körtiderna ändras `korschema.js`, denna tabell och de schemalagda uppgifterna – aldrig `index.html`. Veckoanalysen rör inte `korschema.js`.
 
