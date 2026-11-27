@@ -42,6 +42,7 @@ Avgör **aktuell ISO-vecka** från dagens datum i svensk tid, i formatet `ÅÅÅ
    - Samma vecka får bara finnas en gång i arkivet. Finns den redan, ersätt den.
    - Behåll högst 52 veckor i arkivet. Ta bort de äldsta.
 3. **Samma vecka:** om `VECKOANALYS.vecka` redan är aktuell vecka **skriver den nya körningen över hela objektet**. Tisdagens körning ersätter alltså måndagens. Arkivet ändras inte.
+   - **Spärr mot sämre underlag:** blir en källa `"ej_läsbar"` i den nya körningen men var `"aktuell"` för samma vecka i filen som finns, **behåll den gamla posten för den källan** oförändrad (även `i_sammanfattning` och `riktning_per_område`) och lägg varningen `"<namn> gick inte att läsa nu – uppgifterna är från körningen <dag> kl. <tt:mm>."`. Övriga källor skrivs som vanligt.
 
 ---
 
@@ -105,7 +106,7 @@ Gå igenom reglerna i ordning. Den första som passar gäller.
 - **Måndagens körning:** källor som fortfarande visar förra veckan **utesluts** ur sammanfattningen (`i_sammanfattning: false`). De visas ändå i den avancerade vyn.
 - **Tisdagens körning:** samma regel. Den skriver över måndagens fil för samma vecka (steg 2.3).
 - Månadskällor ingår **aldrig** i veckans sammanfattning.
-- **Svenska kraftnät:** `status` enligt samma tabell som veckokällorna. `i_sammanfattning: true` när den gäller aktuell vecka. Den räknas **aldrig** som veckokälla: inte i spärren "färre än 3", inte i "Aktuella veckokällor" och aldrig som grund för `riktning`.
+- **Svenska kraftnät:** `status` enligt samma tabell som veckokällorna. `i_sammanfattning: true` när den gäller aktuell vecka. (`enkel.elsystemet` i steg 7 är en egen regel: den får fyllas från en driftsida som är högst 7 dagar gammal även när `i_sammanfattning` är `false`.) Den räknas **aldrig** som veckokälla: inte i spärren "färre än 3", inte i "Aktuella veckokällor" och aldrig som grund för `riktning`.
 - **Skånska Energi och Kraftringen:** är texterna i sak identiska räknas de som **en** källa. Använd bara `kraftringen` i `enkel` och sätt `i_sammanfattning: false` för `skanska`, med `anm: "Samma text som Kraftringen – räknas som en källa."`. Är texterna olika räknas de som två källor.
 
 ---
@@ -128,7 +129,7 @@ För varje siffra som står **i text** hos källan:
 - Räkna **aldrig** om moms i datafilen. Fliken gör det själv (× 1,25 eller ÷ 1,25) och visar uträkningen.
 - `orsaker`: välj bland `vind`, `kärnkraft`, `överföring`, `väder`, `temperatur`, `vattenläge`, `gas`, `sol`, `efterfrågan`. Ta bara med orsaker som källan nämner.
 - `sammanfattning`: 2–4 meningar med **egna ord**.
-- `riktning_per_område`: objekt med exakt nycklarna `"SE1"`, `"SE2"`, `"SE3"`, `"SE4"`. Värde `"upp"`, `"ned"` eller `"oförändrat"` **bara** om källan uttryckligen säger att priset i det elområdet blir högre, lägre eller ungefär som förra veckan, för den vecka källan gäller. Annars `"okänt"`. Gissa aldrig. Gäller alla källor utom `"svk"` (sätt alla fyra till `"okänt"` för svk). Används i fliken för att jämföra källornas prognos med Ei:s utfall ("facit").
+- `riktning_per_område`: objekt med exakt nycklarna `"SE1"`, `"SE2"`, `"SE3"`, `"SE4"`. Värde `"upp"`, `"ned"` eller `"oförändrat"` **bara** om källan uttryckligen säger att priset i det elområdet blir högre, lägre eller ungefär som förra veckan, för den vecka källan gäller. Annars `"okänt"`. Gissa aldrig. Gäller alla källor utom `"svk"` (sätt alla fyra till `"okänt"` för svk). Används i fliken för att jämföra källornas prognos med Ei:s utfall ("facit"). Fliken räknar bara veckokällor med `status: "aktuell"` och `i_sammanfattning: true` i facit – månadsprognoser och förra veckans prognoser räknas aldrig.
 
 ---
 
@@ -140,6 +141,7 @@ Underlag: **endast** källor med `i_sammanfattning: true`.
 - `punkter`: 3–6 korta punkter i vardagsspråk. Om möjligt: blir det dyrt eller billigt, när i veckan, och varför. Förklara facktermer ("vindkraften ger mindre el" i stället för "låg vindkraftsproduktion"). Varje punkt har `källor: [id, …]` med de källor den bygger på.
 - `elområden`: alltid fyra poster i ordningen SE1, SE2, SE3, SE4.
   - `riktning` = `"upp"`, `"ned"` eller `"oförändrat"` **bara** om en aktuell källa uttryckligen jämför med förra veckan för det elområdet. Annars `"okänt"`.
+  - **Källorna säger emot varandra** (t.ex. en säger upp och en ned för samma elområde): `riktning: "okänt"` och skriv i `text` vad de säger, t.ex. "Tibber tror på högre pris, Vattenfall på lägre." Välj aldrig en sida.
   - `text`: en kort mening. SE2 är viktigast (användarna sitter i SE2).
 - **`elsystemet` – Läget i elsystemet (Svenska kraftnät). Det viktigaste i fliken; visas överst i enkel vy.** Fyll `enkel.elsystemet = { punkter: [ { text } ] }` med 3–6 punkter i vardagsspråk ur Svenska kraftnäts senaste driftsida, så länge den är **högst 7 dagar gammal** (även om den gäller förra veckan – sidan visar då själv att den är från en tidigare vecka). Ta med det som finns: driftchefens bedömning av priset, kärnkraft per reaktor med datum (i drift / avställd / väntas tillbaka), reservkraft, stamnätet, vattenmagasin, gas/omvärld, risk för effektbrist. Börja punkten med ämnet ("Kärnkraft: …"). Egna ord. Äldre än 7 dagar eller ej läsbar: utelämna `elsystemet`.
 - I `punkter` (Det här påverkar priset) får `"svk"` läggas till i en elbolagspunkt som säger samma sak, och högst 1 egen svk-punkt om något påverkar priset och inte redan står i `elsystemet`. Svenska kraftnät får nämnas i `sammanfattning`, men aldrig som prisprognos eller grund för `riktning`.

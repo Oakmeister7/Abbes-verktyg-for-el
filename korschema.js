@@ -3,8 +3,8 @@
 
    Sidan läser denna fil för att visa "Uppdateras …" och "Nästa uppdatering".
    Ändra tiderna HÄR (och i de schemalagda uppgifterna) – sidan behöver inte
-   byggas om. Saknas filen eller är den ogiltig visar sidan måndag 15:00 och
-   tisdag 16:00.
+   byggas om. Saknas filen eller är den ogiltig visar sidan måndag 08:00,
+   måndag 15:00 och tisdag 15:00.
 
    Vem ändrar: bara utvärderingen av mätningen (4 dec) eller Abbe.
    Veckoanalysen och mätningen rör ALDRIG denna fil.

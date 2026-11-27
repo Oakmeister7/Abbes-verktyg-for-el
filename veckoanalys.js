@@ -6,7 +6,7 @@
    Ändra ALDRIG index.html från den schemalagda uppgiften – bara denna fil och
    veckoanalys-arkiv.js.
 
-   UPPDATERAS: se korschema.js (just nu måndag kl. 15:00 och tisdag kl. 16:00, svensk tid).
+   UPPDATERAS: se korschema.js (just nu måndag kl. 08:00, måndag kl. 15:00 och tisdag kl. 15:00, svensk tid).
    VECKA: fältet "vecka" anger vilken ISO-vecka analysen gäller. Varje källa har
    "gäller_vecka" = den vecka källans egen text gäller. Bara källor vars
    gäller_vecka = vecka räknas med i sammanfattningen.
@@ -21,7 +21,7 @@
      vecka: "ÅÅÅÅ-Wvv",                      // ISO-vecka som analysen gäller, t.ex. "2026-W48"
      period: { "från": "ÅÅÅÅ-MM-DD", "till": "ÅÅÅÅ-MM-DD" },   // måndag–söndag
      uppdaterad: "ÅÅÅÅ-MM-DDTtt:mm:ss+01:00",// ISO-tid för körningen (svensk tid)
-     "körning": "mån" | "tis",              // vilken av veckans två körningar som skrev filen
+     "körning": "mån" | "tis",              // vilken dag körningen som skrev filen gick (båda måndagskörningarna = "mån")
 
      enkel: {                               // för vanliga personer, vardagsspråk
        sammanfattning: "kort text",         // 1–2 meningar
@@ -53,11 +53,12 @@
          } ],
          orsaker: ["vind","kärnkraft","överföring","väder","temperatur","vattenläge","gas","sol","efterfrågan"],
          sammanfattning: "egna ord – ingen kopierad text (sidan är publik)",
+         "riktning_per_område": { SE1, SE2, SE3, SE4 },  // "upp"|"ned"|"oförändrat"|"okänt" (svk: alltid "okänt"), se KORNING.md steg 6
          anm: "valfritt, t.ex. 'samma text som Kraftringen'"
        } ]
      },
 
-     varningar: ["text", …]                 // visas överst i fliken
+     varningar: ["text", …]                 // visas längst ned i fliken (och i Väldigt enkel)
    }
    ============================================================================ */
 
@@ -70,7 +71,7 @@ window.VECKOANALYS_KALLOR = [
   { id: "vattenfall", namn: "Vattenfall", url: "https://www.vattenfall.se/elavtal/elmarknaden/elmarknaden-just-nu/", slag: "vecka", anm: "" },
   { id: "bixia", namn: "Bixia", url: "https://bixia.se/privat/elavtal/elsituationen-just-nu", slag: "månad", anm: "Månadsprognos." },
   { id: "skekraft", namn: "Skellefteå Kraft", url: "https://www.skekraft.se/privat/elavtal/aktuellt-pa-elmarknaden/", slag: "månad", anm: "Månadsprognos." },
-  { id: "goteborg", namn: "Göteborg Energi", url: "https://www.goteborgenergi.se/privat/elavtal/elpriser", slag: "vecka", anm: "Siffror i diagram – följ deras länk till veckoanalysen." },
+  { id: "goteborg", namn: "Göteborg Energi", url: "https://www.goteborgenergi.se/privat/elavtal/elpriser", slag: "vecka", anm: "Siffror i diagram. Följ inga länkar (ger godkännandefråga), se KORNING.md steg 3." },
   { id: "oresundskraft", namn: "Öresundskraft", url: "https://oresundskraft.se/energikompassen/elmarknaden-just-nu/", slag: "vecka", anm: "" },
   { id: "malarenergi", namn: "Mälarenergi", url: "https://www.malarenergi.se/foretag/elavtal-foretag/prognoser-for-elpriset/", slag: "vecka", anm: "Analystext har saknats vid test." }
 ];
