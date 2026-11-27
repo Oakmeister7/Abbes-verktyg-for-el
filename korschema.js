@@ -19,9 +19,10 @@
 
 window.VECKOANALYS_KORSCHEMA = {
   "körningar": [
+    { dag: 1, h: 8 },
     { dag: 1, h: 15 },
-    { dag: 2, h: 16 }
+    { dag: 2, h: 15 }
   ],
-  "ändrad": "2026-11-23",
-  motivering: "Preliminärt efter testkörningen 23 nov (måndag 09 gav 1 av 11 aktuella källor). Utvärderas mot publiceringsloggen 4 dec."
+  "ändrad": "2026-11-27",
+  motivering: "Abbes beslut 27 nov: mätningen avslutad, körningar måndag 08:00, måndag 15:00 och tisdag 15:00."
 };
