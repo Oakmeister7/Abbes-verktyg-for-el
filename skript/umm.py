@@ -15,6 +15,7 @@ OMRADEN = {
     "10Y1001A1001A46L": "SE3",
     "10Y1001A1001A47J": "SE4",
     "46Y000000000007M": "SE3A",
+    "10Y1001C--00148Q": "SE3LS",  # OSÄKERT namn: finns i Nord Pools egen filterlänk, ej i ENTSO-E:s lista
 }
 FONSTER_DAGAR = 14
 SIDA = 1000
@@ -92,7 +93,7 @@ def main():
                            "tillg": p.get("availableCapacity")})
         return ut
 
-    produktion, overforing = [], []
+    produktion, overforing, ovrigt = [], [], []
     for m in alla.values():
         if m.get("isOutdated") or m.get("cancellationReason"):
             continue
@@ -103,6 +104,15 @@ def main():
             "orsak": m.get("unavailabilityReason"), "anm": m.get("remarks"),
             "publicerad": m.get("publicationDate"), "utgivare": m.get("publisherName"),
         }
+        # Typ 5 = övrig marknadsinformation (t.ex. isläggning, begränsad tappning i älvar).
+        # Tider ligger på meddelandenivå, områden i "areas".
+        if m.get("messageType") == 5:
+            omr = [OMRADEN[a.get("code")] for a in (m.get("areas") or []) if a.get("code") in OMRADEN]
+            a_, b_ = iso(m.get("eventStart")), iso(m.get("eventStop"))
+            if omr and a_ and a_ < slut and (b_ is None or b_ > nu):
+                ovrigt.append({**bas, "omraden": sorted(set(omr)), "start": m.get("eventStart"), "stopp": m.get("eventStop"),
+                               "enheter": [u.get("name") for u in (m.get("otherMarketUnits") or []) if u.get("name")]})
+            continue
         # Två varianter i API:et: generationUnits (enhet i en anläggning) och productionUnits (hel anläggning).
         for falt in ("generationUnits", "productionUnits"):
             for g in m.get(falt) or []:
@@ -127,6 +137,7 @@ def main():
                                    "installerat": t.get("installedCapacity"), "perioder": per})
 
     produktion.sort(key=lambda x: (x["perioder"][0]["start"], x["anlaggning"] or ""))
+    ovrigt.sort(key=lambda x: (x["start"] or "", x["utgivare"] or ""))
     overforing.sort(key=lambda x: (x["perioder"][0]["start"], x["fran"] or "", x["till"] or ""))
 
     data = {
@@ -135,7 +146,7 @@ def main():
         "hamtade": skip, "total": total,
         "bransletyper": uppslag("/infrastructure/fueltypes"),
         "otillg_typer": uppslag("/infrastructure/unavailabilitytypes"),
-        "produktion": produktion, "overforing": overforing,
+        "produktion": produktion, "overforing": overforing, "ovrigt": ovrigt,
     }
 
     gammal = None
@@ -156,7 +167,7 @@ def main():
     with open(UT, "w", encoding="utf-8") as f:
         f.write("// Skapad automatiskt av skript/umm.py (GitHub Actions). Ändra inte för hand.\n")
         f.write("window.UMM = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
-    print(f"Skrev {UT}: {len(produktion)} produktion, {len(overforing)} överföring")
+    print(f"Skrev {UT}: {len(produktion)} produktion, {len(overforing)} överföring, {len(ovrigt)} övrigt")
 
 
 if __name__ == "__main__":
