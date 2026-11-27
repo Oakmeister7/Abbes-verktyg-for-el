@@ -2,7 +2,7 @@ name: Hämta Ei Läget på elmarknaden
 
 on:
   schedule:
-    - cron:     - cron: "37 */3 * * *"   # var 3:e timme (UTC). Ei publicerar oftast tisdagar.  # var 3:e timme (UTC). Ei publicerar oftast tisdagar.
+    - cron: "37 */3 * * *"   # var 3:e timme (UTC). Ei publicerar oftast tisdagar.
   workflow_dispatch: {}
 
 permissions:
