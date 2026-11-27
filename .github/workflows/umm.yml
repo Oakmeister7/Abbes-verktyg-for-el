@@ -2,7 +2,7 @@ name: Hämta Nord Pool UMM
 
 on:
   schedule:
-    - cron: "23 * * * *"   # varje timme (UTC), GitHub kan starta några minuter sent
+    - cron: "17 * * * *"   # varje timme (UTC), GitHub kan starta några minuter sent
   workflow_dispatch: {}
 
 permissions:
