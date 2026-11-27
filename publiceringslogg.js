@@ -853,6 +853,100 @@ window.PUBLICERINGSLOGG = {
           "ändrad": null
         }
       ]
+    },
+    {
+      "tid": "2026-11-27T15:37:23+01:00",
+      "anm": "Omkörning efter misslyckad 15:07. ändrad jämförd med senaste lästa post (2026-11-25 15:05). svk: från verktygets sammanfattning (sidan trunkerad). eon: klientfel från webbplatsen. goteborg: bara rubriken syns, ingen text under. skekraft: prognosen gäller nu december",
+      "källor": [
+        {
+          "id": "svk",
+          "gäller_vecka": "2026-W48",
+          "publicerad": "2026-11-23",
+          "markör": "Vecka 48, uppdaterad 23 november 2026",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "eon",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "okänt",
+          "status": "ej_läsbar",
+          "ändrad": null
+        },
+        {
+          "id": "tibber",
+          "gäller_vecka": "2026-W48",
+          "publicerad": "okänt",
+          "markör": "Elprisprognos 23 - 29 november",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "kraftringen",
+          "gäller_vecka": "2026-W48",
+          "publicerad": "okänt",
+          "markör": "Vecka 48",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "skanska",
+          "gäller_vecka": "2026-W48",
+          "publicerad": "okänt",
+          "markör": "Vecka 48",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "vattenfall",
+          "gäller_vecka": "2026-W48",
+          "publicerad": "2026-11-23",
+          "markör": "publicerad 2026-11-23",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "bixia",
+          "gäller_vecka": "månad 2026-11",
+          "publicerad": "2026-11-23",
+          "markör": "publicerad 23 november 2026",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "skekraft",
+          "gäller_vecka": "månad 2026-12",
+          "publicerad": "2026-11-27",
+          "markör": "marknadsläge uppdaterat 2026-11-27, prognos för december",
+          "status": "läst",
+          "ändrad": true
+        },
+        {
+          "id": "goteborg",
+          "gäller_vecka": "2026-W49",
+          "publicerad": "okänt",
+          "markör": "Energimarknadsrapporten vecka 49",
+          "status": "läst",
+          "ändrad": true
+        },
+        {
+          "id": "oresundskraft",
+          "gäller_vecka": "2026-W47",
+          "publicerad": "2026-11-20",
+          "markör": "kommentar 2026-11-20",
+          "status": "läst",
+          "ändrad": false
+        },
+        {
+          "id": "malarenergi",
+          "gäller_vecka": "okänt",
+          "publicerad": "okänt",
+          "markör": "analystext saknas",
+          "status": "ej_läsbar",
+          "ändrad": null
+        }
+      ]
     }
   ],
   sammanfattning: null
