@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Hämtar Nord Pool UMM för SE1–SE4 + SE3A och skriver umm.js.
 
-Körs av GitHub Actions (.github/workflows/umm.yml). Bara standardbibliotek.
+Körs av GitHub Actions (.github/workflows/uppdatera.yml). Bara standardbibliotek.
 Talen kopieras rakt ur Nord Pools fält. Inga egna beräkningar här,
 utom filtrering på tidsfönster och borttag av dubbletter.
 """
@@ -20,7 +20,10 @@ OMRADEN = {
 FONSTER_DAGAR = 14
 SIDA = 1000
 UT = sys.argv[1] if len(sys.argv) > 1 else "umm.js"
-NY_SKRIVNING_TIMMAR = 6
+# Måste vara lägre än sidans GAMMAL_TIMMAR (3 h), annars visas "gammal data" fast körningen gick.
+NY_SKRIVNING_TIMMAR = 2
+MAX_SKIP = 200000
+MAX_LANGD_DAGAR_TYP5 = 365
 
 
 def hamta(path, params=None, forsok=3):
@@ -61,13 +64,22 @@ def enheter(v):
 
 
 def iso(s):
+    """Tolkar ISO-tid. Utan tidszon = UTC (så skickar Nord Pool). Med +hh:mm/Z räknas om till UTC."""
     if not s:
         return None
-    s = s.rstrip("Z")
+    s = s.strip()
+    if s.endswith("Z"):
+        s = s[:-1] + "+00:00"
+    zon = ""
+    for i in range(len(s) - 1, 9, -1):
+        if s[i] in "+-" and ":" in s[i:]:
+            s, zon = s[:i], s[i:]
+            break
     if "." in s:
         a, b = s.split(".", 1)
         s = a + "." + b[:6]
-    return datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+    d = datetime.fromisoformat(s + zon)
+    return d.astimezone(timezone.utc) if d.tzinfo else d.replace(tzinfo=timezone.utc)
 
 
 def main():
@@ -84,11 +96,13 @@ def main():
             if mid and (mid not in alla or (m.get("version") or 0) > (alla[mid].get("version") or 0)):
                 alla[mid] = m
         skip += len(items)
-        if not items or skip >= (total or 0) or skip > 60000:
+        if not items or skip >= (total or 0) or skip > MAX_SKIP:
             break
     print(f"Hämtade {skip} av total {total}, unika meddelanden {len(alla)}")
     if total and skip < total:
-        print("VARNING: inte alla sidor hämtade", file=sys.stderr)
+        # Ofullständig hämtning: skriv inte över umm.js med halv data. Workflow markeras som misslyckad.
+        print(f"FEL: bara {skip} av {total} hämtade – skriver inte.", file=sys.stderr)
+        sys.exit(1)
 
     def i_fonster(perioder):
         ut = []
@@ -118,9 +132,11 @@ def main():
             koder = [(a.get("code") if isinstance(a, dict) else a) for a in (m.get("areas") or [])]
             omr = [OMRADEN[k] for k in koder if k in OMRADEN]
             a_, b_ = iso(m.get("eventStart")), iso(m.get("eventStop"))
-            # Bara tidsbegränsade händelser (har slutdatum) som börjat senast för 30 dagar sedan.
-            # Tillsvidare-meddelanden (t.ex. från 2011) utan slutdatum tas inte med.
-            if omr and a_ and b_ and a_ < slut and b_ > nu and a_ > nu - timedelta(days=30):
+            # Bara tidsbegränsade händelser: har slutdatum och varar kortare än ett år.
+            # Tillsvidare-meddelanden (t.ex. från 2011, eller slut år 9999) tas inte med.
+            # Ett långt pågående meddelande (t.ex. isläggning sedan 6 veckor) tas med.
+            if (omr and a_ and b_ and a_ < slut and b_ > nu
+                    and (b_ - a_) < timedelta(days=MAX_LANGD_DAGAR_TYP5)):
                 ovrigt.append({**bas, "omraden": sorted(set(omr)), "start": m.get("eventStart"), "stopp": m.get("eventStop"),
                                "enheter": enheter(m.get("otherMarketUnits"))})
             continue

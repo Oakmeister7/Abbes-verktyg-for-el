@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Hämtar Ei:s veckorapport "Läget på elmarknaden" och skriver ei.js.
 
-Körs av GitHub Actions (.github/workflows/ei.yml). Talen läses ur Ei:s egen text
+Körs av GitHub Actions (.github/workflows/uppdatera.yml). Talen läses ur Ei:s egen text
 med fasta mönster. Går något inte att tolka skrivs INGET (den gamla filen ligger kvar)
 och körningen markeras som misslyckad, så att det syns i GitHub.
 """
-import html, http.cookiejar, json, os, re, subprocess, sys, tempfile, time, urllib.request
+import html, http.cookiejar, json, os, re, subprocess, sys, tempfile, time, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
 BAS = "https://ei.se"
@@ -50,14 +50,17 @@ def befintlig_alder_dagar():
 
 
 def main():
+    def ej_nadd(vad, e):
+        alder, vnr_g = befintlig_alder_dagar()
+        if alder is not None and alder <= MAX_ALDER_DAGAR:
+            print(f"VARNING: {vad} gick inte att nå ({e}). Befintlig rapport (vecka {vnr_g}, {alder} dagar) är fortfarande aktuell – inget fel.")
+            sys.exit(0)
+        fel(f"{vad} gick inte att nå ({e}) och befintlig rapport är {alder} dagar gammal")
+
     try:
         lista = hamta(LISTA)
     except Exception as e:  # noqa: BLE001
-        alder, vnr = befintlig_alder_dagar()
-        if alder is not None and alder <= MAX_ALDER_DAGAR:
-            print(f"VARNING: Ei:s webbplats gick inte att nå ({e}). Befintlig rapport (vecka {vnr}, {alder} dagar) är fortfarande aktuell – inget fel.")
-            return
-        fel(f"Ei:s webbplats gick inte att nå ({e}) och befintlig rapport är {alder} dagar gammal")
+        ej_nadd("Ei:s listsida", e)
     m = re.search(r'href="([^"]*/(\d{4})-(\d{2})-(\d{2})-laget-pa-elmarknaden---vecka-(\d{1,2})-(\d{4}))"', lista)
     if not m:
         fel("hittade ingen veckorapport på listsidan")
@@ -65,21 +68,25 @@ def main():
     publicerad = f"{m.group(2)}-{m.group(3)}-{m.group(4)}"
     vnr, ar = int(m.group(5)), int(m.group(6))
 
-    sida = hamta(url)
+    try:
+        sida = hamta(url)
+    except Exception as e:  # noqa: BLE001
+        ej_nadd("Ei:s veckosida", e)
     kropp = re.sub(r"<script.*?</script>|<style.*?</style>", "", sida, flags=re.S)
     text = html.unescape(re.sub(r"<[^>]+>", " ", kropp))
     text = re.sub(r"\s+", " ", text)
 
     spot = {}
     for omr in ("SE1", "SE2", "SE3", "SE4"):
-        r = re.search(r"Spotpriset i " + omr + r" (ökade med|minskade med|är oförändrat)\s*([0-9][0-9.,]*)?\s*(?:procent)?,? veckomedel blev (-?[0-9][0-9.,]*) EUR/MWh", text)
+        # Procent krävs vid ökade/minskade, saknas vid oförändrat. Minustecken kan vara - eller −.
+        r = re.search(r"Spotpriset i " + omr + r" (?:(ökade med|minskade med)\s*([0-9][0-9.,]*)\s*procent|(är oförändrat)),? veckomedel blev ([-−]?[0-9][0-9.,]*) EUR/MWh", text)
         if not r:
             fel(f"spotpris för {omr} gick inte att tolka (Ei kan ha ändrat format)")
-        riktning = {"ökade med": "upp", "minskade med": "ned", "är oförändrat": "oförändrat"}[r.group(1)]
+        riktning = {"ökade med": "upp", "minskade med": "ned", None: "oförändrat"}[r.group(1)]
         andr = tal(r.group(2)) if r.group(2) else 0.0
         if riktning == "ned":
             andr = -andr
-        spot[omr] = {"medel": tal(r.group(3)), "andring_proc": andr, "riktning": riktning}
+        spot[omr] = {"medel": tal(r.group(4)), "andring_proc": andr, "riktning": riktning}
 
     rubrik = re.search(r"Läget på elmarknaden - vecka (\d{1,2}) (\d{4})", text)
     if rubrik and (int(rubrik.group(1)), int(rubrik.group(2))) != (vnr, ar):
@@ -87,14 +94,18 @@ def main():
 
     # Magasin ur PDF:en (Tabell 5). Misslyckas det blir magasin null, resten skrivs ändå.
     magasin, magasin_fel = None, None
-    p = re.search(r'href="([^"]+\.pdf)"', sida)
-    pdf_url = (p.group(1) if p.group(1).startswith("http") else BAS + p.group(1)) if p else None
+    # Bara PDF:er som heter "...elmarknaden..." – helst den med rätt veckonummer.
+    pdfer = [h for h in re.findall(r'href="([^"]+\.pdf)"', sida, re.I)
+             if "elmarknaden" in urllib.parse.unquote(h).lower()]
+    ratt = [h for h in pdfer if re.search(r"vecka-0?" + str(vnr) + r"\b", urllib.parse.unquote(h).lower())]
+    h = (ratt or pdfer or [None])[0]
+    pdf_url = (h if h.startswith("http") else BAS + h) if h else None
     if pdf_url:
         try:
             with tempfile.TemporaryDirectory() as d:
                 fp = os.path.join(d, "r.pdf")
                 open(fp, "wb").write(hamta(pdf_url, binar=True))
-                txt = subprocess.run(["pdftotext", "-layout", fp, "-"], capture_output=True, text=True, check=True).stdout
+                txt = subprocess.run(["pdftotext", "-layout", fp, "-"], capture_output=True, text=True, check=True, timeout=30).stdout
             i = txt.find("Tabell 5: Magasinfyllnadsgrad")
             if i < 0:
                 raise ValueError("Tabell 5 saknas")
@@ -107,6 +118,17 @@ def main():
         except Exception as e:  # noqa: BLE001
             magasin_fel = str(e)
             print("VARNING magasin: " + magasin_fel, file=sys.stderr)
+
+    # Gick PDF:en inte att läsa men vi har magasin för samma rapportvecka: behåll det.
+    if magasin is None and os.path.exists(UT):
+        try:
+            t = open(UT, encoding="utf-8").read()
+            g = json.loads(t[t.index("{"):t.rindex("}") + 1])
+            if g.get("veckonr") == vnr and g.get("ar") == ar and g.get("magasin"):
+                magasin = g["magasin"]
+                print("Behåller tidigare magasin för samma vecka.")
+        except Exception:  # noqa: BLE001
+            pass
 
     data = {
         "kalla": "Energimarknadsinspektionen (Ei), Läget på elmarknaden",
