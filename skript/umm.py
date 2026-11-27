@@ -103,22 +103,26 @@ def main():
             "orsak": m.get("unavailabilityReason"), "anm": m.get("remarks"),
             "publicerad": m.get("publicationDate"), "utgivare": m.get("publisherName"),
         }
-        for g in m.get("generationUnits") or []:
-            omr = OMRADEN.get(g.get("areaEic"))
-            if not omr:
-                continue
-            per = i_fonster(g.get("timePeriods"))
-            if per:
-                produktion.append({**bas, "omrade": omr, "anlaggning": g.get("productionUnitName"),
-                                   "enhet": g.get("name"), "bransle": g.get("fuelType"),
-                                   "installerat": g.get("installedCapacity"), "perioder": per})
+        # Två varianter i API:et: generationUnits (enhet i en anläggning) och productionUnits (hel anläggning).
+        for falt in ("generationUnits", "productionUnits"):
+            for g in m.get(falt) or []:
+                omr = OMRADEN.get(g.get("areaEic"))
+                if not omr:
+                    continue
+                per = i_fonster(g.get("timePeriods"))
+                if per:
+                    produktion.append({**bas, "omrade": omr, "kalla_falt": falt,
+                                       "anlaggning": g.get("productionUnitName") or g.get("name"),
+                                       "enhet": g.get("name"), "bransle": g.get("fuelType"),
+                                       "installerat": g.get("installedCapacity"), "perioder": per})
         for t in m.get("transmissionUnits") or []:
-            ut_o, in_o = t.get("outAreaName"), t.get("inAreaName")
+            # Nord Pool: kraften går FRÅN inArea TILL outArea (kontrollerat: SE3->SE4 = 6200 MW, SE3->SE3A = 2810 MW).
+            fran, till = t.get("inAreaName"), t.get("outAreaName")
             if not (OMRADEN.get(t.get("outAreaEic")) or OMRADEN.get(t.get("inAreaEic"))):
                 continue
             per = i_fonster(t.get("timePeriods"))
             if per:
-                overforing.append({**bas, "fran": ut_o, "till": in_o,
+                overforing.append({**bas, "fran": fran, "till": till,
                                    "ledning": ", ".join(a.get("name", "") for a in (m.get("assets") or t.get("assets") or [])) or t.get("name"),
                                    "installerat": t.get("installedCapacity"), "perioder": per})
 
