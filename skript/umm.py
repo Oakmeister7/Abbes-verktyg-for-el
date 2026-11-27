@@ -107,11 +107,12 @@ def main():
         # Typ 5 = övrig marknadsinformation (t.ex. isläggning, begränsad tappning i älvar).
         # Tider ligger på meddelandenivå, områden i "areas".
         if m.get("messageType") == 5:
-            omr = [OMRADEN[a.get("code")] for a in (m.get("areas") or []) if a.get("code") in OMRADEN]
+            koder = [(a.get("code") if isinstance(a, dict) else a) for a in (m.get("areas") or [])]
+            omr = [OMRADEN[k] for k in koder if k in OMRADEN]
             a_, b_ = iso(m.get("eventStart")), iso(m.get("eventStop"))
             if omr and a_ and a_ < slut and (b_ is None or b_ > nu):
                 ovrigt.append({**bas, "omraden": sorted(set(omr)), "start": m.get("eventStart"), "stopp": m.get("eventStop"),
-                               "enheter": [u.get("name") for u in (m.get("otherMarketUnits") or []) if u.get("name")]})
+                               "enheter": [u.get("name") if isinstance(u, dict) else str(u) for u in (m.get("otherMarketUnits") or []) if u]})
             continue
         # Två varianter i API:et: generationUnits (enhet i en anläggning) och productionUnits (hel anläggning).
         for falt in ("generationUnits", "productionUnits"):
