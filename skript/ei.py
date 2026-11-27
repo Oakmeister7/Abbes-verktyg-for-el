@@ -5,19 +5,22 @@ Körs av GitHub Actions (.github/workflows/ei.yml). Talen läses ur Ei:s egen te
 med fasta mönster. Går något inte att tolka skrivs INGET (den gamla filen ligger kvar)
 och körningen markeras som misslyckad, så att det syns i GitHub.
 """
-import html, json, os, re, subprocess, sys, tempfile, time, urllib.request
-from datetime import datetime, timezone
+import html, http.cookiejar, json, os, re, subprocess, sys, tempfile, time, urllib.request
+from datetime import datetime, timedelta, timezone
 
 BAS = "https://ei.se"
 LISTA = BAS + "/om-oss/nyheter/laget-pa-elmarknaden"
 UT = sys.argv[1] if len(sys.argv) > 1 else "ei.js"
-UA = {"User-Agent": "abbes-verktyg-ei/1.0"}
+UA = {"User-Agent": "Mozilla/5.0 (compatible; abbes-verktyg-ei/1.1)", "Accept": "text/html,application/pdf,*/*", "Accept-Language": "sv-SE,sv;q=0.9"}
+# Ei:s webbplats sätter cookies och omdirigerar (307). Utan cookies blir det en slinga.
+OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+MAX_ALDER_DAGAR = 9  # Ei publicerar en gång i veckan
 
 
 def hamta(url, binar=False, forsok=3):
     for i in range(forsok):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
+            with OPENER.open(urllib.request.Request(url, headers=UA), timeout=60) as r:
                 b = r.read()
                 return b if binar else b.decode("utf-8", errors="replace")
         except Exception as e:  # noqa: BLE001
@@ -36,8 +39,25 @@ def fel(msg):
     sys.exit(1)
 
 
+def befintlig_alder_dagar():
+    try:
+        t = open(UT, encoding="utf-8").read()
+        g = json.loads(t[t.index("{"):t.rindex("}") + 1])
+        pub = datetime.strptime(g["publicerad"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - pub).days, g.get("veckonr")
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
 def main():
-    lista = hamta(LISTA)
+    try:
+        lista = hamta(LISTA)
+    except Exception as e:  # noqa: BLE001
+        alder, vnr = befintlig_alder_dagar()
+        if alder is not None and alder <= MAX_ALDER_DAGAR:
+            print(f"VARNING: Ei:s webbplats gick inte att nå ({e}). Befintlig rapport (vecka {vnr}, {alder} dagar) är fortfarande aktuell – inget fel.")
+            return
+        fel(f"Ei:s webbplats gick inte att nå ({e}) och befintlig rapport är {alder} dagar gammal")
     m = re.search(r'href="([^"]*/(\d{4})-(\d{2})-(\d{2})-laget-pa-elmarknaden---vecka-(\d{1,2})-(\d{4}))"', lista)
     if not m:
         fel("hittade ingen veckorapport på listsidan")
