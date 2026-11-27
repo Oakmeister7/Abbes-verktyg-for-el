@@ -52,6 +52,14 @@ def uppslag(path):
         return {}
 
 
+def enheter(v):
+    if not v:
+        return []
+    if isinstance(v, str):
+        return [v]
+    return [u.get("name") if isinstance(u, dict) else str(u) for u in v if u]
+
+
 def iso(s):
     if not s:
         return None
@@ -110,9 +118,11 @@ def main():
             koder = [(a.get("code") if isinstance(a, dict) else a) for a in (m.get("areas") or [])]
             omr = [OMRADEN[k] for k in koder if k in OMRADEN]
             a_, b_ = iso(m.get("eventStart")), iso(m.get("eventStop"))
-            if omr and a_ and a_ < slut and (b_ is None or b_ > nu):
+            # Bara tidsbegränsade händelser (har slutdatum) som börjat senast för 30 dagar sedan.
+            # Tillsvidare-meddelanden (t.ex. från 2011) utan slutdatum tas inte med.
+            if omr and a_ and b_ and a_ < slut and b_ > nu and a_ > nu - timedelta(days=30):
                 ovrigt.append({**bas, "omraden": sorted(set(omr)), "start": m.get("eventStart"), "stopp": m.get("eventStop"),
-                               "enheter": [u.get("name") if isinstance(u, dict) else str(u) for u in (m.get("otherMarketUnits") or []) if u]})
+                               "enheter": enheter(m.get("otherMarketUnits"))})
             continue
         # Två varianter i API:et: generationUnits (enhet i en anläggning) och productionUnits (hel anläggning).
         for falt in ("generationUnits", "productionUnits"):
