@@ -128,6 +128,7 @@ För varje siffra som står **i text** hos källan:
 - Räkna **aldrig** om moms i datafilen. Fliken gör det själv (× 1,25 eller ÷ 1,25) och visar uträkningen.
 - `orsaker`: välj bland `vind`, `kärnkraft`, `överföring`, `väder`, `temperatur`, `vattenläge`, `gas`, `sol`, `efterfrågan`. Ta bara med orsaker som källan nämner.
 - `sammanfattning`: 2–4 meningar med **egna ord**.
+- `riktning_per_område`: objekt med exakt nycklarna `"SE1"`, `"SE2"`, `"SE3"`, `"SE4"`. Värde `"upp"`, `"ned"` eller `"oförändrat"` **bara** om källan uttryckligen säger att priset i det elområdet blir högre, lägre eller ungefär som förra veckan, för den vecka källan gäller. Annars `"okänt"`. Gissa aldrig. Gäller alla källor utom `"svk"` (sätt alla fyra till `"okänt"` för svk). Används i fliken för att jämföra källornas prognos med Ei:s utfall ("facit").
 
 ---
 
@@ -168,6 +169,7 @@ Lägg till i `varningar` (i den här ordningen, bara de som gäller):
    - `vecka` matchar `^\d{4}-W\d{2}$` och är aktuell vecka.
    - `avancerad.källor` har 11 poster med samma id som `VECKOANALYS_KALLOR`.
    - `enkel.elområden` har SE1–SE4.
+   - varje post i `avancerad.källor` har `riktning_per_område` med SE1–SE4 och bara värdena upp/ned/oförändrat/okänt.
    - `VECKOANALYS_ARKIV` är en lista.
 2. **Spärr för index.html:** `git status --porcelain` får bara visa `veckoanalys.js` och/eller `veckoanalys-arkiv.js`. Visas något annat (särskilt `index.html`): **avbryt, pusha inte**, och rapportera.
 3. **Commit-meddelande** (en rad):
