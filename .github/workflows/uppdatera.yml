@@ -1,0 +1,61 @@
+name: Uppdatera data
+
+# Startas i första hand utifrån (cron-job.org -> workflow_dispatch), varje timme 06–22 svensk tid.
+# GitHubs eget schema nedan är bara reserv – GitHub kan fördröja eller tappa schemalagda körningar.
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: uppdatera
+  cancel-in-progress: false
+
+jobs:
+  uppdatera:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installera pdftotext (för Ei:s PDF)
+        run: sudo apt-get install -y -qq poppler-utils >/dev/null
+
+      - name: Nord Pool – driftmeddelanden (umm.js)
+        id: umm
+        continue-on-error: true
+        run: python3 skript/umm.py umm.js
+
+      - name: Ei – Läget på elmarknaden (ei.js)
+        id: ei
+        continue-on-error: true
+        run: python3 skript/ei.py ei.js
+
+      - name: Spärr – bara umm.js och ei.js får ändras
+        run: |
+          andrade=$(git status --porcelain | awk '{print $2}' | grep -v -E '^(umm|ei)\.js$' || true)
+          if [ -n "$andrade" ]; then echo "Andra filer ändrade: $andrade"; exit 1; fi
+
+      - name: Committa och pusha om något ändrats
+        run: |
+          if git diff --quiet -- umm.js ei.js && git ls-files --error-unmatch umm.js ei.js >/dev/null 2>&1; then
+            echo "Ingen ändring."; exit 0
+          fi
+          git config user.name "data-bot"
+          git config user.email "data-bot@users.noreply.github.com"
+          git add umm.js ei.js
+          git commit -m "Data: uppdatering $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1
+
+      - name: Markera körningen som misslyckad om en hämtning föll
+        if: steps.umm.outcome == 'failure' || steps.ei.outcome == 'failure'
+        run: |
+          echo "Nord Pool: ${{ steps.umm.outcome }} · Ei: ${{ steps.ei.outcome }}"
+          exit 1
