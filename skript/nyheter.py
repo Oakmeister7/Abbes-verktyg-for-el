@@ -41,9 +41,6 @@ KALLOR = [
     # Svenska kraftnäts allmänna nyheter är mest byggprojekt (vägar, samråd) – därför filter.
     {"id": "svk-nyheter", "namn": "Svenska kraftnät", "typ": "rss", "filter": True, "vikt": 0,
      "url": "https://www.svk.se/Api/RSSFeed/GetNewsByCategory?name=Allm%C3%A4nnanyheter"},
-    {"id": "ei", "namn": "Energimarknadsinspektionen", "typ": "lista", "filter": False, "vikt": 1,
-     "url": "https://ei.se/om-oss/nyheter", "lankmonster": r"/om-oss/nyheter/.*20\d\d-\d\d-\d\d-",
-     "hoppa": r"^Läget på elmarknaden"},
     {"id": "energiforetagen", "namn": "Energiföretagen", "typ": "rss", "filter": False, "vikt": 0,
      "url": "https://via.tt.se/rss/releases/latest?publisherId=3237229"},
     {"id": "konsumentverket", "namn": "Konsumentverket", "typ": "rss", "filter": True, "vikt": 0,
@@ -53,6 +50,9 @@ KALLOR = [
     {"id": "riksdagen", "namn": "Riksdagen, näringsutskottet", "typ": "rss", "filter": True, "vikt": 0,
      "url": "https://data.riksdagen.se/dokumentlista/?sok=el&doktyp=bet&org=NU&sort=datum&sortorder=desc&utformat=rss"},
 ]
+
+# Saknas: Energimarknadsinspektionens allmänna nyheter. Nyhetslistan på ei.se byggs i webbläsaren och
+# finns inte i sidans källkod (test 2026-11-28). Tills en öppen lista hittas täcks Ei av morgonkollen.
 
 # Hämtas INTE. Flödena svarar tekniskt (test 2026-11-28) men villkoren är okända eller säger nej.
 # Flytta en källa till KALLOR först när Abbe har bestämt.

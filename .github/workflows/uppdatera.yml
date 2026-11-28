@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       simulera_fel:
-        description: "Test: låtsas att en källa är nere (umm, ei, pris eller produktion). Lämna tomt normalt."
+        description: "Test: låtsas att en källa är nere (umm, ei, pris, produktion eller nyheter). Lämna tomt normalt."
         required: false
         default: ""
   schedule:
@@ -49,6 +49,12 @@ jobs:
         continue-on-error: true
         run: python3 skript/pris.py
 
+      # Rubriker till "El nyhetsflöde". Faller den behålls förra filen – övriga data påverkas inte.
+      - name: Nyhetsrubriker (nyheter.js)
+        id: nyheter
+        continue-on-error: true
+        run: python3 skript/nyheter.py
+
       - name: Kontrollera datafilerna, stäm av mot faktisk produktion och skriv status.js
         id: status
         env:
@@ -59,7 +65,7 @@ jobs:
 
       - name: Spärr – bara datafilerna får ändras
         run: |
-          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei|pris|status)\.js$' || true)
+          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei|pris|status|nyheter)\.js$' || true)
           if [ -n "$andrade" ]; then echo "Andra filer ändrade: $andrade"; exit 1; fi
 
       - name: Committa och pusha om något ändrats
@@ -67,14 +73,14 @@ jobs:
           git config user.name "data-bot"
           git config user.email "data-bot@users.noreply.github.com"
           mkdir -p /tmp/ny
-          for f in umm.js ei.js pris.js status.js; do [ -f "$f" ] && cp "$f" /tmp/ny/; done
+          for f in umm.js ei.js pris.js status.js nyheter.js; do [ -f "$f" ] && cp "$f" /tmp/ny/; done
           # Lägg alltid de nya datafilerna ovanpå senaste main. Då kan det aldrig bli en krock,
           # även om något annat publicerats medan körningen gick.
           for i in 1 2 3; do
             git fetch -q origin main
             git reset -q --hard origin/main
             cp /tmp/ny/*.js .
-            git add umm.js ei.js pris.js status.js 2>/dev/null || true
+            git add umm.js ei.js pris.js status.js nyheter.js 2>/dev/null || true
             if git diff --cached --quiet; then echo "Ingen ändring."; exit 0; fi
             git commit -q -m "Data: uppdatering $(date -u +%Y-%m-%dT%H:%MZ)"
             git push -q origin HEAD:main && exit 0
