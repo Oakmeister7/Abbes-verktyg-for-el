@@ -25,8 +25,12 @@ jobs:
           import nyheter as ny
           s = ny.hamta("https://ei.se/om-oss/nyheter").decode("utf-8", "replace")
           print("EI langd", len(s))
-          for h in sorted(set(re.findall(r'href=["\']([^"\']*20\d\d-\d\d-\d\d-[^"\']*)', s)))[:12]:
+          hr = re.findall(r'href=["\']([^"\']+)', s)
+          print("EI antal href", len(hr))
+          for h in [h for h in hr if "nyhet" in h.lower()][:25]:
               print("EI " + h)
+          for m in list(re.finditer(r"20\d\d-\d\d-\d\d", s))[:6]:
+              print("EI-DATUM " + re.sub(r"\s+", " ", s[max(0, m.start()-350):m.end()+350]))
           s = ny.hamta("https://www.svk.se/press-och-nyheter/rss-floden/").decode("utf-8", "replace")
           for h in sorted(set(re.findall(r'href=["\']([^"\']*RSSFeed[^"\']*)', s))):
               print("SVK " + h)

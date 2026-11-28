@@ -41,8 +41,6 @@ KALLOR = [
     # Svenska kraftnäts allmänna nyheter är mest byggprojekt (vägar, samråd) – därför filter.
     {"id": "svk-nyheter", "namn": "Svenska kraftnät", "typ": "rss", "filter": True, "vikt": 0,
      "url": "https://www.svk.se/Api/RSSFeed/GetNewsByCategory?name=Allm%C3%A4nnanyheter"},
-    {"id": "svk-elmarknad", "namn": "Svenska kraftnät", "typ": "rss", "filter": False, "vikt": 0,
-     "url": "https://www.svk.se/Api/RSSFeed/GetNewsByCategory?name=Elmarknadallm%C3%A4nt"},
     {"id": "ei", "namn": "Energimarknadsinspektionen", "typ": "lista", "filter": False, "vikt": 1,
      "url": "https://ei.se/om-oss/nyheter", "lankmonster": r"/om-oss/nyheter/.*20\d\d-\d\d-\d\d-",
      "hoppa": r"^Läget på elmarknaden"},
