@@ -27,6 +27,7 @@
        sammanfattning: "kort text",         // 1–2 meningar
        punkter: [ { text, "källor": ["id", …] } ],          // 3–6 punkter
        elsystemet: { punkter: [ { text } ] },               // 3–6 punkter från Svenska kraftnät (läget i elsystemet)
+       elbrist: { text: "låg", datum: "ÅÅÅÅ-MM-DD" },       // Svenska kraftnäts eget ord för risken för effektbrist, se KORNING.md steg 7. Utelämnas om det inte står.
        "elområden": [                        // alltid SE1, SE2, SE3, SE4
          { "elområde": "SE2", riktning: "upp"|"ned"|"oförändrat"|"okänt",
            text: "kort förklaring", "källor": ["id", …] }
@@ -93,6 +94,7 @@ window.VECKOANALYS = {
       { text: "Elnätet kan inte föra ned tillräckligt med el från norr till söder, främst mellan SE2 och SE3. Därför blir prisskillnaden mellan norra och södra Sverige stor.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] },
       { text: "Fler kärnkraftverk kommer tillbaka och det hjälper, men inte hela vägen: en reaktor i Ringhals står still till december (enligt elbolagen 24 november). Lite vatten i Norges vattenmagasin och dyr gas i Europa håller också uppe priset.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] }
     ],
+    elbrist: { text: "låg", datum: "2026-11-23" },
     elsystemet: {
       punkter: [
         { text: "Elpriset: priset i södra Sverige har tidvis varit högt. När årets underhåll av kraftverken är klart och mer el kan styras fram i söder bör priserna sjunka de kommande veckorna." },

@@ -146,6 +146,7 @@ Underlag: **endast** källor med `i_sammanfattning: true`.
   - **Källorna säger emot varandra** (t.ex. en säger upp och en ned för samma elområde): `riktning: "okänt"` och skriv i `text` vad de säger, t.ex. "Tibber tror på högre pris, Vattenfall på lägre." Välj aldrig en sida.
   - `text`: en kort mening. SE2 är viktigast (användarna sitter i SE2).
 - **`elsystemet` – Läget i elsystemet (Svenska kraftnät). Det viktigaste i fliken; visas överst i enkel vy.** Fyll `enkel.elsystemet = { punkter: [ { text } ] }` med 3–6 punkter i vardagsspråk ur Svenska kraftnäts senaste driftsida, så länge den är **högst 7 dagar gammal** (även om den gäller förra veckan – sidan visar då själv att den är från en tidigare vecka). Ta med det som finns: driftchefens bedömning av priset, kärnkraft per reaktor med datum (i drift / avställd / väntas tillbaka), reservkraft, stamnätet, vattenmagasin (ange land, regel 0.7), gas/omvärld, risk för effektbrist. Börja punkten med ämnet ("Kärnkraft: …"). Egna ord. Äldre än 7 dagar eller ej läsbar: utelämna `elsystemet`.
+- **`elbrist` – risken för elbrist enligt Svenska kraftnät.** På driftsidan, under rubriken "Status på tillräcklig effekt per elområde i Sverige", står en mening som "Risken för effektbrist anses vara låg". Fyll `enkel.elbrist = { text, datum }`: `text` = Svenska kraftnäts **eget ord** för risken, med små bokstäver (t.ex. `"låg"`), och `datum` = dagen sidan uppdaterades (`"ÅÅÅÅ-MM-DD"`). Använder de en längre formulering som inte är ett enda ord: skriv den kort med deras ord (högst 6 ord). Tolka aldrig själv och välj aldrig ett ord som inte står på sidan. Står ingen bedömning, eller är sidan äldre än 7 dagar eller ej läsbar: utelämna `elbrist`. Fliken visar raden "Risk för elbrist: låg · Svenska kraftnät 23 nov" bredvid pristrycket, så att högt pris inte blandas ihop med risk för strömavbrott.
 - I `punkter` (Det här påverkar priset) får `"svk"` läggas till i en elbolagspunkt som säger samma sak, och högst 1 egen svk-punkt om något påverkar priset och inte redan står i `elsystemet`. Svenska kraftnät får nämnas i `sammanfattning`, men aldrig som prisprognos eller grund för `riktning`.
 - Finns inga aktuella källor: skriv en punkt om att ingen källa har publicerat veckans analys än, och sätt alla riktningar till `"okänt"`.
 
@@ -173,6 +174,7 @@ Lägg till i `varningar` (i den här ordningen, bara de som gäller):
    - `vecka` matchar `^\d{4}-W\d{2}$` och är aktuell vecka.
    - `avancerad.källor` har 11 poster med samma id som `VECKOANALYS_KALLOR`.
    - `enkel.elområden` har SE1–SE4.
+   - `enkel.elbrist` saknas helt, eller har `text` (Svenska kraftnäts eget ord) och `datum` (`ÅÅÅÅ-MM-DD`).
    - varje post i `avancerad.källor` har `riktning_per_område` med SE1–SE4 och bara värdena upp/ned/oförändrat/okänt.
    - `VECKOANALYS_ARKIV` är en lista.
 2. **Spärr för index.html:** `git status --porcelain` får bara visa `veckoanalys.js` och/eller `veckoanalys-arkiv.js`. Visas något annat (särskilt `index.html`): **avbryt, pusha inte**, och rapportera.
