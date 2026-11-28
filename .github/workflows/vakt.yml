@@ -1,0 +1,44 @@
+name: Vakt – veckoanalysen
+
+# Körs varje gång veckoanalys.js eller veckoanalys-arkiv.js publiceras (av den schemalagda analysen).
+# Är filerna ogiltiga återställs de direkt till föregående version, så att fliken aldrig visar halvfärdigt innehåll.
+on:
+  push:
+    branches: [main]
+    paths: ["veckoanalys.js", "veckoanalys-arkiv.js"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vakt
+  cancel-in-progress: false
+
+jobs:
+  vakt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Kontrollera veckoanalysen
+        id: k
+        continue-on-error: true
+        run: node skript/vakt.js
+      - name: Återställ till föregående version om den är ogiltig
+        if: steps.k.outcome == 'failure'
+        run: |
+          git checkout HEAD~1 -- veckoanalys.js veckoanalys-arkiv.js
+          if ! node skript/vakt.js; then echo "Även föregående version är ogiltig – rör inget."; exit 1; fi
+          git config user.name "data-bot"
+          git config user.email "data-bot@users.noreply.github.com"
+          git commit -m "Vakt: återställde veckoanalysen (den nya versionen var ogiltig)" -- veckoanalys.js veckoanalys-arkiv.js
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && break
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          echo "Den nya veckoanalysen var ogiltig och har återställts."
+          exit 1

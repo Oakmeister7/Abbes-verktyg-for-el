@@ -3,7 +3,12 @@ name: Uppdatera data
 # Startas i första hand utifrån (cron-job.org -> workflow_dispatch), varje timme 06–22 svensk tid.
 # GitHubs eget schema nedan är bara reserv – GitHub kan fördröja eller tappa schemalagda körningar.
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      simulera_fel:
+        description: "Test: låtsas att en källa är nere (umm, ei, pris eller produktion). Lämna tomt normalt."
+        required: false
+        default: ""
   schedule:
     - cron: "17 * * * *"
 
@@ -18,6 +23,8 @@ jobs:
   uppdatera:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      SIMULERA_FEL: ${{ github.event.inputs.simulera_fel }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,14 +46,22 @@ jobs:
         continue-on-error: true
         run: python3 skript/pris.py
 
-      - name: Spärr – bara umm.js, ei.js och pris.js får ändras
+      - name: Kontrollera datafilerna, stäm av mot faktisk produktion och skriv status.js
+        id: status
+        env:
+          UTFALL_UMM: ${{ steps.umm.outcome }}
+          UTFALL_EI: ${{ steps.ei.outcome }}
+          UTFALL_PRIS: ${{ steps.pris.outcome }}
+        run: python3 skript/status.py
+
+      - name: Spärr – bara datafilerna får ändras
         run: |
-          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei|pris)\.js$' || true)
+          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei|pris|status)\.js$' || true)
           if [ -n "$andrade" ]; then echo "Andra filer ändrade: $andrade"; exit 1; fi
 
       - name: Committa och pusha om något ändrats
         run: |
-          for f in umm.js ei.js pris.js; do [ -f "$f" ] && git add "$f"; done
+          for f in umm.js ei.js pris.js status.js; do [ -f "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then
             echo "Ingen ändring."; exit 0
           fi
@@ -60,8 +75,8 @@ jobs:
           done
           exit 1
 
-      - name: Markera körningen som misslyckad om en hämtning föll
-        if: steps.umm.outcome == 'failure' || steps.ei.outcome == 'failure' || steps.pris.outcome == 'failure'
+      - name: Markera körningen som misslyckad om en källa föll
+        if: steps.status.outputs.fel != '' || steps.status.outcome != 'success'
         run: |
-          echo "Nord Pool: ${{ steps.umm.outcome }} · Ei: ${{ steps.ei.outcome }} · Pris: ${{ steps.pris.outcome }}"
+          echo "Källor som föll: ${{ steps.status.outputs.fel }} (status-steget: ${{ steps.status.outcome }})"
           exit 1

@@ -18,6 +18,8 @@ URL = "https://www.elprisetjustnu.se/api/v1/prices/{y}/{md}_{o}.json"
 
 def hamta(dag, omrade):
     """Returnerar listan med poster, eller None om filen inte finns än (404)."""
+    if os.environ.get("SIMULERA_FEL") == "pris":
+        raise RuntimeError("simulerat fel")
     url = URL.format(y=dag.strftime("%Y"), md=dag.strftime("%m-%d"), o=omrade)
     req = urllib.request.Request(url, headers={"User-Agent": "abbes-verktyg-for-el (GitHub Actions, 1 gang/timme)"})
     for forsok in range(3):

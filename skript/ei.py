@@ -18,6 +18,8 @@ MAX_ALDER_DAGAR = 9  # Ei publicerar en gång i veckan
 
 
 def hamta(url, binar=False, forsok=3):
+    if os.environ.get("SIMULERA_FEL") == "ei":
+        raise RuntimeError("simulerat fel")
     for i in range(forsok):
         try:
             with OPENER.open(urllib.request.Request(url, headers=UA), timeout=60) as r:

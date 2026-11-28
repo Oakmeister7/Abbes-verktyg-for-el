@@ -27,6 +27,8 @@ MAX_LANGD_DAGAR_TYP5 = 365
 
 
 def hamta(path, params=None, forsok=3):
+    if os.environ.get("SIMULERA_FEL") == "umm":
+        raise RuntimeError("simulerat fel")
     url = API + path + ("?" + urllib.parse.urlencode(params, doseq=True) if params else "")
     for i in range(forsok):
         try:
