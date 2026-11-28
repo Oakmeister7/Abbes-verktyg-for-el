@@ -68,10 +68,10 @@ VANTAR = [
 
 REL = re.compile(
     r"(?i)\b(el|elen|elens)\b|\bel(pris|nät|stöd|skatt|avtal|marknad|områd|bolag|handel|räkning|brist|system|försörjning|kris|kund|använd"
-    r"|produktion|förbrukning|export|import|kabel|ledning|certifikat|kostnad|intensiv|ektrifier)"
+    r"|produktion|förbrukning|export|import|kabel|ledning|förbindelse|certifikat|kostnad|intensiv|ektrifier)"
     r"|kärnkraft|reaktor|energiskatt|effektavgift|nätavgift|högkostnadsskydd|svenska kraftnät|energimarknadsinspektionen"
     r"|vindkraft|vattenkraft|kraftledning|effektbrist|energipris|energistöd|energikris|kraftvärme|stamnät|gasprisstöd"
-    r"|kraftsystem|kraftproduktion|energiföretag")
+    r"|kraftsystem|kraftproduktion|energiföretag|telefonförsäljning")
 
 KATEGORIER = [
     ("Kärnkraft", r"kärnkraft|reaktor|ringhals|forsmark|oskarshamn"),
@@ -81,8 +81,13 @@ KATEGORIER = [
     ("Pris", r"pris|dyr|billig|rekord"),
 ]
 POANG = [
-    (3, r"elstöd|elprisstöd|energistöd|högkostnadsskydd|elskatt|energiskatt|effektavgift|nätavgift|rekord|chock|effektbrist|elbrist|frånkoppl|bortkoppl"),
-    (2, r"höj|sänk|stopp|varnar|varning|slopa|förbud|böter|vite|kris|dyr|billig|telefonförsäljning|elavtal|elräkning|elpris|energipris|stöd till hushåll|flaskhals|elkund"),
+    # Tunga ämnen: sådant som brukar bli rubriker och kundfrågor.
+    (3, r"elstöd|elprisstöd|energistöd|högkostnadsskydd|elskatt|energiskatt|skatt på el|effektavgift|nätavgift|nätsavgift|rekord|chock"
+        r"|effektbrist|elbrist|frånkoppl|bortkoppl|elområde|telefonförsäljning"),
+    # Händelseord: något ändras, stoppas eller varnas för.
+    (2, r"höj|sänk|stopp|varnar|varning|slopa|förbud|böter|vite|döms|avslår|kris|hög|dyr|billig|klartecken"),
+    # Ämnesord: rör kundens avtal, räkning eller pris.
+    (2, r"elavtal|elräkning|elpris|energipris|stöd till hushåll|flaskhals|elkund|kärnkraft|reaktor|elbolag|elförbindelse"),
 ]
 
 
