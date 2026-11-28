@@ -91,7 +91,7 @@ window.VECKOANALYS = {
       { text: "Det är kallare än vanligt, enligt Kraftringen 3–4 grader under det normala. När det är kallt går det åt mer el till uppvärmning, och då stiger priset.", "källor": ["kraftringen", "tibber", "vattenfall"] },
       { text: "Det blåser mindre, så vindkraftverken ger mindre el – bara omkring tre fjärdedelar av det vanliga, och minst kring torsdag.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] },
       { text: "Elnätet kan inte föra ned tillräckligt med el från norr till söder, främst mellan SE2 och SE3. Därför blir prisskillnaden mellan norra och södra Sverige stor.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] },
-      { text: "Fler kärnkraftverk kommer tillbaka och det hjälper, men inte hela vägen: en reaktor i Ringhals står still till december. Lite vatten i magasinen och dyr gas i Europa håller också uppe priset.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] }
+      { text: "Fler kärnkraftverk kommer tillbaka och det hjälper, men inte hela vägen: en reaktor i Ringhals står still till december (enligt elbolagen 24 november). Lite vatten i Norges vattenmagasin och dyr gas i Europa håller också uppe priset.", "källor": ["kraftringen", "tibber", "vattenfall", "svk"] }
     ],
     elsystemet: {
       punkter: [
