@@ -14,5 +14,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Testa källor
-        run: python3 skript/kalltest.py
+      - name: Torrkörning av nyhetshämtningen (skriver inget)
+        run: python3 skript/nyheter.py --torr
+      - name: Visa hur Ei:s och Svenska kraftnäts sidor ser ut
+        run: |
+          python3 - <<'PY'
+          import re, sys
+          sys.path.insert(0, "skript")
+          sys.argv = ["x", "--torr"]
+          import nyheter as ny
+          s = ny.hamta("https://ei.se/om-oss/nyheter").decode("utf-8", "replace")
+          for m in list(re.finditer(r'<a\b[^>]*href=["\']([^"\']*/om-oss/nyheter/20[^"\']*)["\']', s))[:4]:
+              print("EI " + re.sub(r"\s+", " ", s[max(0, m.start()-300):m.end()+400]))
+          s = ny.hamta("https://www.svk.se/press-och-nyheter/rss-floden/").decode("utf-8", "replace")
+          for h in sorted(set(re.findall(r'href=["\']([^"\']*RSSFeed[^"\']*)', s))):
+              print("SVK " + h)
+          PY
