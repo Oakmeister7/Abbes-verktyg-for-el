@@ -34,19 +34,24 @@ jobs:
         continue-on-error: true
         run: python3 skript/ei.py ei.js
 
-      - name: Spärr – bara umm.js och ei.js får ändras
+      - name: Spotpris idag och imorgon (pris.js)
+        id: pris
+        continue-on-error: true
+        run: python3 skript/pris.py
+
+      - name: Spärr – bara umm.js, ei.js och pris.js får ändras
         run: |
-          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei)\.js$' || true)
+          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^(umm|ei|pris)\.js$' || true)
           if [ -n "$andrade" ]; then echo "Andra filer ändrade: $andrade"; exit 1; fi
 
       - name: Committa och pusha om något ändrats
         run: |
-          if git diff --quiet -- umm.js ei.js && git ls-files --error-unmatch umm.js ei.js >/dev/null 2>&1; then
+          for f in umm.js ei.js pris.js; do [ -f "$f" ] && git add "$f"; done
+          if git diff --cached --quiet; then
             echo "Ingen ändring."; exit 0
           fi
           git config user.name "data-bot"
           git config user.email "data-bot@users.noreply.github.com"
-          git add umm.js ei.js
           git commit -m "Data: uppdatering $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && exit 0
@@ -56,7 +61,7 @@ jobs:
           exit 1
 
       - name: Markera körningen som misslyckad om en hämtning föll
-        if: steps.umm.outcome == 'failure' || steps.ei.outcome == 'failure'
+        if: steps.umm.outcome == 'failure' || steps.ei.outcome == 'failure' || steps.pris.outcome == 'failure'
         run: |
-          echo "Nord Pool: ${{ steps.umm.outcome }} · Ei: ${{ steps.ei.outcome }}"
+          echo "Nord Pool: ${{ steps.umm.outcome }} · Ei: ${{ steps.ei.outcome }} · Pris: ${{ steps.pris.outcome }}"
           exit 1

@@ -1,0 +1,38 @@
+name: Prishistorik (engångskörning)
+
+# Startas bara för hand. Räknar dygnsmedel SE1–SE4 från 2022-11-01 till prishistorik.csv.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prishistorik
+  cancel-in-progress: false
+
+jobs:
+  historik:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hämta dygnsmedel
+        run: python3 skript/prishistorik.py
+      - name: Spärr – bara prishistorik.csv får ändras
+        run: |
+          andrade=$(git status --porcelain | sed 's/^...//' | grep -v -E '^prishistorik\.csv$' || true)
+          if [ -n "$andrade" ]; then echo "Andra filer ändrade: $andrade"; exit 1; fi
+      - name: Committa
+        run: |
+          git add prishistorik.csv
+          if git diff --cached --quiet; then echo "Ingen ändring."; exit 0; fi
+          git config user.name "data-bot"
+          git config user.email "data-bot@users.noreply.github.com"
+          git commit -m "Data: prishistorik $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          exit 1
