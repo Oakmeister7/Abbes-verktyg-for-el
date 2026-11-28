@@ -16,6 +16,7 @@ Den här filen är en **fristående instruktion** för den schemalagda uppgiften
 6. Formatet för filerna står dokumenterat överst i `veckoanalys.js` (schema 1). Följ det exakt, inklusive fältnamnen med å/ä/ö.
 7. **Vattenmagasin: skriv alltid vilket land.** Skriv "Sveriges vattenmagasin", "Norges vattenmagasin" eller "de nordiska vattenmagasinen" – aldrig bara "magasinen" eller "lite vatten i magasinen". Säger källan inte vilket land: skriv "vattenmagasinen (källan anger inte vilket land)". Sveriges och Norges läge kan vara helt olika samma vecka (t.ex. vecka 46 2026: Sveriges över det normala, Norges under), och fliken visar Ei:s siffra för Sverige bredvid.
 8. **Datum vid läget i kraftsystemet.** När en punkt säger något om kärnkraft, reaktorer, ledningar, isläggning eller magasin: skriv från vilken dag uppgiften är, t.ex. "enligt Svenska kraftnät 23 november" eller "(Tibber 24 november)". Fliken visar samtidigt Nord Pools aktuella läge, och utan datum ser äldre uppgifter ut som motsägelser.
+9. **Två oberoende källor för påståenden om marknadsläget.** Ett påstående om läget (en reaktor står still eller kommer tillbaka, en ledning är begränsad, isläggning, fyllnad i vattenmagasin, gaslager, vindläge) får stå som ett rent påstående i `sammanfattning`, `punkter` och `elområden[].text` **bara** om minst två oberoende källor säger det. Skånska Energi och Kraftringen med samma text räknas som en. Säger bara en källa det: skriv det med källans namn i texten ("Enligt Tibber …") och ange bara den källan i `källor` – fliken märker då punkten "En källa". Kan det inte knytas till någon källa: utelämna det. Prissiffror från en enda källa skrivs alltid med källans namn. Fliken stämmer dessutom själv av kärnkraft och ledningar mot Nord Pool, faktisk produktion och dagens priser.
 
 ---
 
@@ -170,6 +171,7 @@ Lägg till i `varningar` (i den här ordningen, bara de som gäller):
 
 1. **Syntaxkontroll:** filerna ska gå att köra som JavaScript. Kör t.ex.
    `node -e "global.window={};require('./veckoanalys.js');require('./veckoanalys-arkiv.js');"`
+   Kör också `node skript/vakt.js` – den ska skriva "Veckoanalysen är giltig.". Skriver den OGILTIG: rätta felen och kör igen. Pusha aldrig en fil som vakten underkänner (GitHub återställer den då automatiskt till föregående version).
    Kontrollera att:
    - `vecka` matchar `^\d{4}-W\d{2}$` och är aktuell vecka.
    - `avancerad.källor` har 11 poster med samma id som `VECKOANALYS_KALLOR`.
