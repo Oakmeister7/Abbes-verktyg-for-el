@@ -1,0 +1,2 @@
+/* Skrivs automatiskt av skript/pris.py – ändra inte för hand. */
+window.PRIS = {"hamtat":"2026-11-28T09:37:47Z","kalla":"elprisetjustnu.se (data från ENTSO-E). Priser utan moms, skatter och påslag.","dagar":{"2026-11-28":{"SE1":{"eur_mwh":68.19,"ore_kwh":76.4,"min_ore":51.69,"max_ore":99.84,"n":96},"exr":11.203727,"SE2":{"eur_mwh":65.88,"ore_kwh":73.81,"min_ore":54.96,"max_ore":97.04,"n":96},"SE3":{"eur_mwh":154.8,"ore_kwh":173.44,"min_ore":114.98,"max_ore":221.61,"n":96},"SE4":{"eur_mwh":186.64,"ore_kwh":209.1,"min_ore":140.8,"max_ore":257.47,"n":96}}}};
