@@ -10,6 +10,7 @@ Regler (bestämda av Abbe 2026-11-28):
 Körs av GitHub Actions (.github/workflows/uppdatera.yml) varje timme. `--torr` skriver bara en sammanfattning.
 Skriver window.NYHETER = { hamtat, kallor: [{id, namn, ok, antal, fel}],
                            poster: [{id, rubrik, lank, kalla, kid, tid, tidtyp, kat, poang}] }
+tidtyp: publicerad = flödets klockslag, datum = sidan anger bara dag, upptackt = första gången posten sågs.
 """
 import hashlib, html, http.cookiejar, json, os, re, sys, time, urllib.error, urllib.request, urllib.robotparser
 import xml.etree.ElementTree as ET
@@ -37,10 +38,14 @@ KALLOR = [
      "url": "https://www.regeringen.se/Filter/RssFeed?filterType=Taxonomy&filterByType=FilteredPressReleasesList"},
     {"id": "svk", "namn": "Svenska kraftnät", "typ": "rss", "filter": False, "vikt": 1,
      "url": "https://via.tt.se/rss/releases/latest?publisherId=3235391"},
-    {"id": "svk-nyheter", "namn": "Svenska kraftnät", "typ": "rss", "filter": False, "vikt": 0,
+    # Svenska kraftnäts allmänna nyheter är mest byggprojekt (vägar, samråd) – därför filter.
+    {"id": "svk-nyheter", "namn": "Svenska kraftnät", "typ": "rss", "filter": True, "vikt": 0,
      "url": "https://www.svk.se/Api/RSSFeed/GetNewsByCategory?name=Allm%C3%A4nnanyheter"},
+    {"id": "svk-elmarknad", "namn": "Svenska kraftnät", "typ": "rss", "filter": False, "vikt": 0,
+     "url": "https://www.svk.se/Api/RSSFeed/GetNewsByCategory?name=Elmarknadallm%C3%A4nt"},
     {"id": "ei", "namn": "Energimarknadsinspektionen", "typ": "lista", "filter": False, "vikt": 1,
-     "url": "https://ei.se/om-oss/nyheter", "lankmonster": r"/om-oss/nyheter/20\d\d/"},
+     "url": "https://ei.se/om-oss/nyheter", "lankmonster": r"/om-oss/nyheter/.*20\d\d-\d\d-\d\d-",
+     "hoppa": r"^Läget på elmarknaden"},
     {"id": "energiforetagen", "namn": "Energiföretagen", "typ": "rss", "filter": False, "vikt": 0,
      "url": "https://via.tt.se/rss/releases/latest?publisherId=3237229"},
     {"id": "konsumentverket", "namn": "Konsumentverket", "typ": "rss", "filter": True, "vikt": 0,
@@ -79,7 +84,7 @@ KATEGORIER = [
 ]
 POANG = [
     (3, r"elstöd|elprisstöd|energistöd|högkostnadsskydd|elskatt|energiskatt|effektavgift|nätavgift|rekord|chock|effektbrist|elbrist|frånkoppl|bortkoppl"),
-    (2, r"höj|sänk|stopp|varnar|varning|slopa|förbud|böter|vite|kris|dyr|billig|telefonförsäljning|elavtal|elräkning|elpris|energipris|stöd till hushåll"),
+    (2, r"höj|sänk|stopp|varnar|varning|slopa|förbud|böter|vite|kris|dyr|billig|telefonförsäljning|elavtal|elräkning|elpris|energipris|stöd till hushåll|flaskhals|elkund"),
 ]
 
 
@@ -186,7 +191,7 @@ def las_lista(data, bas, monster):
         # Datum söks i länktexten, i adressen och i texten direkt efter länken – inte före (det hör till förra posten).
         d = datum_i(ren(inre)) or datum_i(href) or datum_i(ren(sida[m.end():m.end() + 160]))
         rubrik = re.sub(r"^\s*20\d\d-\d\d-\d\d\s*", "", rubrik)
-        ut.append({"rubrik": rubrik, "lank": lank, "tid": d, "tidtyp": "publicerad" if d else "upptackt"})
+        ut.append({"rubrik": rubrik, "lank": lank, "tid": d, "tidtyp": "datum" if d else "upptackt"})
     return ut
 
 
@@ -242,6 +247,8 @@ def main():
                 if not re.match(r"^https?://", p["lank"]):
                     continue
                 if k["filter"] and not REL.search(p["rubrik"]):
+                    continue
+                if k.get("hoppa") and re.search(k["hoppa"], p["rubrik"]):
                     continue
                 pid = hashlib.sha1(p["lank"].encode("utf-8")).hexdigest()[:12]
                 if pid in gamla and gamla[pid].get("tid"):

@@ -24,8 +24,9 @@ jobs:
           sys.argv = ["x", "--torr"]
           import nyheter as ny
           s = ny.hamta("https://ei.se/om-oss/nyheter").decode("utf-8", "replace")
-          for m in list(re.finditer(r'<a\b[^>]*href=["\']([^"\']*/om-oss/nyheter/20[^"\']*)["\']', s))[:4]:
-              print("EI " + re.sub(r"\s+", " ", s[max(0, m.start()-300):m.end()+400]))
+          print("EI langd", len(s))
+          for h in sorted(set(re.findall(r'href=["\']([^"\']*20\d\d-\d\d-\d\d-[^"\']*)', s)))[:12]:
+              print("EI " + h)
           s = ny.hamta("https://www.svk.se/press-och-nyheter/rss-floden/").decode("utf-8", "replace")
           for h in sorted(set(re.findall(r'href=["\']([^"\']*RSSFeed[^"\']*)', s))):
               print("SVK " + h)
